@@ -58,28 +58,30 @@ export function SignUpForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
+      <Card className="border-kodrix-purple/20 dark:border-amber-500/20 shadow-xl overflow-hidden">
+        <div className="h-1 w-full bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-orange-500" />
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">Kayıt Ol</CardTitle>
+          <CardDescription>Yeni bir hesap oluşturun</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">E-posta</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="ornek@kodrix.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="focus-visible:ring-kodrix-purple dark:focus-visible:ring-amber-500"
                 />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">Şifre</Label>
                 </div>
                 <Input
                   id="password"
@@ -87,11 +89,12 @@ export function SignUpForm({
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="focus-visible:ring-kodrix-purple dark:focus-visible:ring-amber-500"
                 />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
+                  <Label htmlFor="repeat-password">Şifre Tekrar</Label>
                 </div>
                 <Input
                   id="repeat-password"
@@ -99,17 +102,18 @@ export function SignUpForm({
                   required
                   value={repeatPassword}
                   onChange={(e) => setRepeatPassword(e.target.value)}
+                  className="focus-visible:ring-kodrix-purple dark:focus-visible:ring-amber-500"
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating an account..." : "Sign up"}
+              {error && <p className="text-sm text-red-500 font-medium bg-red-50 dark:bg-red-900/10 p-2 rounded">{error}</p>}
+              <Button type="submit" className="w-full bg-kodrix-purple hover:bg-purple-700 dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-gray-900 font-bold transition-all" disabled={isLoading}>
+                {isLoading ? "Hesap Oluşturuluyor..." : "Kayıt Ol"}
               </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
-              <Link href="/auth/login" className="underline underline-offset-4">
-                Login
+            <div className="mt-6 text-center text-sm">
+              Zaten hesabınız var mı?{" "}
+              <Link href="/login" className="font-semibold text-kodrix-purple hover:text-purple-700 dark:text-amber-500 dark:hover:text-amber-400 underline underline-offset-4 transition">
+                Giriş Yap
               </Link>
             </div>
           </form>

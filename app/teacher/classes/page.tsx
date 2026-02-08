@@ -4,9 +4,16 @@ import { BookOpen, Calendar, Clock } from "lucide-react";
 
 export default async function TeacherClassesPage() {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // Fetch all classes for now since teacher assignment logic is pending
-    const { data: classes } = await supabase.from("classes").select("*").order("created_at", { ascending: false });
+    if (!user) return null;
+
+    // Fetch classes assigned to this teacher
+    const { data: classes } = await supabase
+        .from("classes")
+        .select("*")
+        .eq("teacher_id", user.id)
+        .order("created_at", { ascending: false });
 
     return (
         <div className="p-8 space-y-8">
@@ -52,7 +59,7 @@ export default async function TeacherClassesPage() {
 
                 {classes?.length === 0 && (
                     <div className="col-span-full text-center py-12 bg-white dark:bg-gray-900 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 text-gray-500">
-                        Sınıf bulunamadı.
+                        Henüz atanmış bir sınıfınız yok.
                     </div>
                 )}
             </div>

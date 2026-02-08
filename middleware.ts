@@ -30,7 +30,6 @@ export async function middleware(request: NextRequest) {
             return response;
         }
         // Redirect to login for key protected routes (or all others)
-        // For now, let's protect everything except login
         const url = request.nextUrl.clone();
         url.pathname = "/login";
         return NextResponse.redirect(url);
@@ -64,35 +63,54 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    // 5c. Protect Role-Specific Routes
+    // 5c. Protect Role-Specific Routes (Strict Mode)
+
+    // Admin Route Protection
     if (path.startsWith("/admin") && role !== "admin") {
-        // Redirect unauthorized access to their own dashboard
+        // Redirect to their own dashboard
         if (role === "teacher") url.pathname = "/teacher";
         else if (role === "student") url.pathname = "/student";
         else url.pathname = "/login";
         return NextResponse.redirect(url);
     }
 
-    if (path.startsWith("/teacher") && role !== "teacher" && role !== "admin") {
-        // Allow admins to view teacher pages? Plan said maybe. 
-        // Let's strict block for now unless admin needs to debug. 
-        // Update: Plan says "Teacher -> /teacher OR admin". I'll allow admin for now.
-        // Wait, if I allow admin, where do they get redirected if they hit /teacher home? 
-        // Valid requirement: Admin might want to see what teacher sees.
-        // But strictly, Admin dashboard is /admin.
-        // Let's stick to strict separation first.
-        if (role === "admin") return response; // Allow admin
+    // Teacher Route Protection
+    if (path.startsWith("/teacher")) {
+        if (role === "teacher") return response; // Allowed
 
-        if (role === "student") url.pathname = "/student";
-        else url.pathname = "/login";
+        // If Admin tries to access Teacher dashboard, redirect to Admin dashboard
+        if (role === "admin") {
+            url.pathname = "/admin";
+            return NextResponse.redirect(url);
+        }
+
+        // If Student tries to access Teacher dashboard, redirect to Student dashboard
+        if (role === "student") {
+            url.pathname = "/student";
+            return NextResponse.redirect(url);
+        }
+
+        url.pathname = "/login";
         return NextResponse.redirect(url);
     }
 
-    if (path.startsWith("/student") && role !== "student" && role !== "admin") {
-        if (role === "admin") return response; // Allow admin
+    // Student Route Protection
+    if (path.startsWith("/student")) {
+        if (role === "student") return response; // Allowed
 
-        if (role === "teacher") url.pathname = "/teacher";
-        else url.pathname = "/login";
+        // If Admin tries to access Student dashboard, redirect to Admin dashboard
+        if (role === "admin") {
+            url.pathname = "/admin"; // Admin has their own view
+            return NextResponse.redirect(url);
+        }
+
+        // If Teacher tries to access Student dashboard, redirect to Teacher dashboard
+        if (role === "teacher") {
+            url.pathname = "/teacher";
+            return NextResponse.redirect(url);
+        }
+
+        url.pathname = "/login";
         return NextResponse.redirect(url);
     }
 
