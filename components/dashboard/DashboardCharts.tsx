@@ -83,7 +83,7 @@ export function DashboardCharts({ stats }: DashboardChartsProps) {
                                 <Tooltip
                                     contentStyle={{ backgroundColor: "#1F2937", borderColor: "#374151", color: "#F3F4F6" }}
                                     itemStyle={{ color: "#F3F4F6" }}
-                                    formatter={(value: number) => [`${value.toLocaleString("tr-TR")} ₺`, ""]}
+                                    formatter={(value: number | undefined) => value !== undefined ? [`${value.toLocaleString("tr-TR")} ₺`, ""] : ["", ""]}
                                 />
                                 <Legend iconType="circle" wrapperStyle={{ paddingTop: "20px" }} />
                                 <Bar dataKey="income" name="Gelir" fill="#10B981" radius={[4, 4, 0, 0]} barSize={20} />
@@ -116,7 +116,7 @@ export function DashboardCharts({ stats }: DashboardChartsProps) {
                                 <Tooltip
                                     contentStyle={{ backgroundColor: "#1F2937", borderColor: "#374151", color: "#F3F4F6" }}
                                     itemStyle={{ color: "#F3F4F6" }}
-                                    formatter={(value: number) => [`${value.toLocaleString("tr-TR")} ₺`, ""]}
+                                    formatter={(value: number | undefined) => value !== undefined ? [`${value.toLocaleString("tr-TR")} ₺`, ""] : ["", ""]}
                                 />
                                 <Legend
                                     verticalAlign="bottom"
