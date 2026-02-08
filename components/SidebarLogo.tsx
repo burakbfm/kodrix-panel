@@ -13,56 +13,26 @@ export function SidebarLogo({ className }: { className?: string }) {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return (
-      <div className={cn("w-full h-12 bg-white/10 dark:bg-black/10 rounded-lg animate-pulse", className)} />
-    );
-  }
+  const logoSrc = mounted && theme === "dark" ? "/logos/logo-dark.png" : "/logos/logo-light.png";
 
   return (
     <div className={cn("relative flex items-center justify-center", className || "w-full h-12")}>
-      {/* Light Mode Logo - Dark text for purple background */}
-      {theme === "light" && (
-        <div className="relative w-full h-full">
-          <Image
-            src="/logos/logo-light.png"
-            alt="KodriX Logo"
-            fill
-            className="object-contain"
-            priority
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-              const parent = e.currentTarget.parentElement;
-              if (parent) {
-                parent.innerText = 'KodriX';
-                // Basic fallback styling, might inherit text size from parent via className
-                parent.className = "flex items-center justify-center h-full font-bold";
-              }
-            }}
-          />
-        </div>
-      )}
-
-      {/* Dark Mode Logo - Dark text for amber background */}
-      {theme === "dark" && (
-        <div className="relative w-full h-full">
-          <Image
-            src="/logos/logo-dark.png"
-            alt="KodriX Logo"
-            fill
-            className="object-contain"
-            priority
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-              const parent = e.currentTarget.parentElement;
-              if (parent) {
-                parent.innerText = 'KodriX';
-                parent.className = "flex items-center justify-center h-full font-bold";
-              }
-            }}
-          />
-        </div>
-      )}
+      <div className="relative w-full h-full">
+        <Image
+          src={logoSrc}
+          alt="KodriX Logo"
+          fill
+          className="object-contain"
+          priority
+          onError={(e) => {
+            e.currentTarget.style.display = 'none';
+            const parent = e.currentTarget.parentElement;
+            if (parent) {
+              parent.innerHTML = '<span class="text-2xl font-bold bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 bg-clip-text text-transparent">KodriX</span>';
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }

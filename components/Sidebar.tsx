@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, DollarSign, BookOpen, LogOut, CreditCard, User } from "lucide-react";
+import { LayoutDashboard, Users, DollarSign, BookOpen, LogOut, CreditCard, User, GraduationCap } from "lucide-react";
 import { SidebarLogo } from "@/components/SidebarLogo";
 
 type Role = "admin" | "teacher" | "student";
@@ -19,6 +19,7 @@ export function Sidebar({ role }: SidebarProps) {
         admin: [
             { href: "/admin", label: "Genel Bakış", icon: LayoutDashboard },
             { href: "/admin/classes", label: "Sınıflar & Dersler", icon: BookOpen },
+            { href: "/admin/lessons", label: "Ders Taslakları", icon: GraduationCap },
             { href: "/admin/users", label: "Kullanıcılar", icon: Users },
             { href: "/admin/finance", label: "Finans", icon: DollarSign },
         ],
