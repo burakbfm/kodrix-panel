@@ -150,7 +150,7 @@ export function AddPaymentButton({ students, payments }: AddPaymentButtonProps) 
                                                             }}
                                                             className="w-full text-left p-2 rounded text-sm hover:bg-kodrix-purple/10 text-gray-700 dark:text-gray-300 flex justify-between items-center"
                                                         >
-                                                            <span>{p.title || "Genel Anlaşma"}</span>
+                                                            <span>{p.notes || "Ödeme Anlaşması"}</span>
                                                             <span className="text-xs text-gray-500">
                                                                 Kalan: {p.agreed_amount - p.paid_amount} ₺
                                                             </span>
