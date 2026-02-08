@@ -99,7 +99,7 @@ CREATE POLICY "İlgili kullanıcılar sınıf derslerini görebilir" ON class_le
     OR EXISTS (
         SELECT 1 FROM enrollments e
         WHERE e.class_id = class_lessons.class_id
-        AND e.student_id = auth.uid()
+        AND e.user_id = auth.uid()
     )
 );
 CREATE POLICY "Adminler sınıf dersi atayabilir" ON class_lessons FOR INSERT WITH CHECK (
@@ -129,7 +129,7 @@ CREATE POLICY "İlgili kullanıcılar ödevleri görebilir" ON lesson_assignment
         SELECT 1 FROM class_lessons cl
         JOIN enrollments e ON e.class_id = cl.class_id
         WHERE cl.id = lesson_assignments.class_lesson_id
-        AND e.student_id = auth.uid()
+        AND e.user_id = auth.uid()
     )
 );
 CREATE POLICY "Öğretmenler ödev oluşturabilir" ON lesson_assignments FOR INSERT WITH CHECK (
@@ -153,6 +153,15 @@ CREATE POLICY "Öğrenciler gönderimlerini güncelleyebilir" ON student_submiss
     student_id = auth.uid()
     OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role IN ('admin', 'teacher'))
 );
+
+-- Trigger için function (henüz oluşturulmamışsa)
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = TIMEZONE('utc', NOW());
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
 
 -- Trigger
 CREATE TRIGGER update_class_lessons_updated_at BEFORE UPDATE ON class_lessons

@@ -14,8 +14,7 @@ export default async function AdminClassesPage() {
     .from("classes")
     .select(`
       *,
-      enrollments(count),
-      lessons(count)
+      enrollments(count)
     `)
     .order("created_at", { ascending: false });
 

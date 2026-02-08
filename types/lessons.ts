@@ -1,14 +1,40 @@
-// Ders Yönetim Sistemi Tipleri
+// YENİ Ders Yönetim Sistemi Tipleri - Hiyerarşik Yapı
 
 export type LessonMaterialType = 'pdf' | 'video' | 'link' | 'file' | 'document';
 export type LessonProgressStatus = 'not_started' | 'in_progress' | 'completed';
 
+// Program (Kurs)
+export interface Program {
+    id: string;
+    title: string;
+    description: string | null;
+    total_lessons: number;
+    total_modules: number;
+    duration_weeks: number | null;
+    created_by: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+// Modül
+export interface Module {
+    id: string;
+    program_id: string;
+    title: string;
+    description: string | null;
+    order: number;
+    created_at: string;
+}
+
+// Ders
 export interface Lesson {
     id: string;
+    module_id: string;
     lesson_number: number;
     title: string;
     description: string | null;
     content: string | null;
+    meeting_link: string | null;  // Katılım linki
     duration_minutes: number;
     order: number;
     created_by: string | null;
@@ -16,6 +42,7 @@ export interface Lesson {
     updated_at: string;
 }
 
+// Ders Materyali
 export interface LessonMaterial {
     id: string;
     lesson_id: string;
@@ -27,24 +54,24 @@ export interface LessonMaterial {
     created_at: string;
 }
 
-export interface ClassLesson {
+// Sınıf-Program Ataması
+export interface ClassProgram {
     id: string;
     class_id: string;
-    lesson_id: string;
+    program_id: string;
     teacher_id: string | null;
-    scheduled_date: string | null;
-    start_time: string | null;
-    end_time: string | null;
+    start_date: string | null;
     is_active: boolean;
     notes: string | null;
     assigned_at: string;
     updated_at: string;
 }
 
+// Öğrenci İlerlemesi
 export interface StudentLessonProgress {
     id: string;
     student_id: string;
-    class_lesson_id: string;
+    lesson_id: string;
     status: LessonProgressStatus;
     progress_percentage: number;
     started_at: string | null;
@@ -52,9 +79,10 @@ export interface StudentLessonProgress {
     last_accessed_at: string | null;
 }
 
+// Ödev
 export interface LessonAssignment {
     id: string;
-    class_lesson_id: string;
+    lesson_id: string;
     title: string;
     description: string | null;
     due_date: string | null;
@@ -62,6 +90,7 @@ export interface LessonAssignment {
     created_at: string;
 }
 
+// Ödev Gönderimi
 export interface StudentSubmission {
     id: string;
     assignment_id: string;
@@ -75,13 +104,21 @@ export interface StudentSubmission {
     graded_by: string | null;
 }
 
-// Genişletilmiş tipler (JOIN sonuçları için)
+// Genişletilmiş Tipler
+export interface ProgramWithModules extends Program {
+    modules: ModuleWithLessons[];
+}
+
+export interface ModuleWithLessons extends Module {
+    lessons: Lesson[];
+}
+
 export interface LessonWithMaterials extends Lesson {
     materials: LessonMaterial[];
 }
 
-export interface ClassLessonWithDetails extends ClassLesson {
-    lesson: Lesson;
+export interface ClassProgramWithDetails extends ClassProgram {
+    program: Program;
     class: {
         id: string;
         name: string;
@@ -90,8 +127,4 @@ export interface ClassLessonWithDetails extends ClassLesson {
         id: string;
         full_name: string;
     } | null;
-}
-
-export interface StudentProgressWithLesson extends StudentLessonProgress {
-    class_lesson: ClassLessonWithDetails;
 }

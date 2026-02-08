@@ -19,7 +19,7 @@ export function Sidebar({ role }: SidebarProps) {
         admin: [
             { href: "/admin", label: "Genel Bakış", icon: LayoutDashboard },
             { href: "/admin/classes", label: "Sınıflar & Dersler", icon: BookOpen },
-            { href: "/admin/lessons", label: "Ders Taslakları", icon: GraduationCap },
+            { href: "/admin/programs", label: "Programlar", icon: GraduationCap },
             { href: "/admin/users", label: "Kullanıcılar", icon: Users },
             { href: "/admin/finance", label: "Finans", icon: DollarSign },
         ],
@@ -56,11 +56,11 @@ export function Sidebar({ role }: SidebarProps) {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition group ${isActive
-                                ? "bg-white/10 dark:bg-black/10 text-white dark:text-gray-900"
+                                ? "bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white shadow-lg shadow-purple-500/20 dark:shadow-amber-500/20 scale-105 font-bold"
                                 : "text-white/80 dark:text-gray-900/80 hover:bg-white/10 dark:hover:bg-black/5 hover:text-white dark:hover:text-gray-900"
                                 }`}
                         >
-                            <Icon className={`w-5 h-5 ${isActive ? "text-amber-400 dark:text-kodrix-purple" : "text-amber-400 dark:text-kodrix-purple"}`} />
+                            <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-amber-400 dark:text-kodrix-purple"}`} />
                             <span className="font-medium">{item.label}</span>
                         </Link>
                     );

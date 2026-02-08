@@ -248,15 +248,21 @@ export async function moveLesson(formData: FormData) {
   revalidatePath(`/admin/classes/${classId}`);
 }
 
-export async function deleteLesson(formData: FormData) {
+// Updated to handle both contexts if needed, but for now we focus on programs revalidation
+// If classId is present, we revalidate class, otherwise program.
+// But wait, the previous deleteLesson was for CLASSES.
+// We need a NEW action for PROGRAM LESSONS to avoid breaking existing class functionality?
+// The user has 'programs' and 'classes'.
+// Let's modify deleteLesson to handle both or clean it up.
+// Actually, I'll rename the argument to be more generic 'parentId' logic or create deleteProgramLesson.
+
+export async function deleteLesson(programId: string, lessonId: string) { // Changed signature!
   const supabase = await createClient();
-  const lessonId = formData.get("lessonId") as string;
-  const classId = formData.get("classId") as string;
 
   const { error } = await supabase.from("lessons").delete().eq("id", lessonId);
 
   if (error) console.log("Ders silme hatası:", error);
-  revalidatePath(`/admin/classes/${classId}`);
+  revalidatePath(`/admin/programs/${programId}`);
 }
 
 // ============================================
@@ -410,4 +416,31 @@ export async function deleteExpense(formData: FormData) {
   }
 
   revalidatePath("/admin/finance");
+}
+
+// ============================================
+// PROGRAM & MODULE MANAGEMENT (NEW)
+// ============================================
+
+export async function deleteProgram(programId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("programs").delete().eq("id", programId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/admin/programs");
+  redirect("/admin/programs");
+}
+
+export async function deleteModule(programId: string, moduleId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("modules").delete().eq("id", moduleId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath(`/admin/programs/${programId}`);
 }
