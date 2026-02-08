@@ -11,6 +11,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        "kodrix-purple": "#461E5C", // KodriX Brand Color
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

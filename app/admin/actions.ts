@@ -9,18 +9,18 @@ import { createAdminClient } from "@/lib/supabase/admin"; // Yeni dosyamız
 export async function createClass(formData: FormData) {
   const supabase = await createClient();
   const name = formData.get("name") as string;
-  
+
   const { error } = await supabase.from("classes").insert([{ name }]);
   if (error) console.error("Sınıf ekleme hatası:", error);
   revalidatePath("/admin/classes");
 }
 
 export async function deleteClass(formData: FormData) {
-    const supabase = await createClient();
-    const classId = formData.get("classId") as string;
-    const { error } = await supabase.from("classes").delete().eq("id", classId);
-    if (error) console.error("Silme hatası:", error);
-    revalidatePath("/admin/classes");
+  const supabase = await createClient();
+  const classId = formData.get("classId") as string;
+  const { error } = await supabase.from("classes").delete().eq("id", classId);
+  if (error) console.error("Silme hatası:", error);
+  revalidatePath("/admin/classes");
 }
 
 // --- MERKEZİ KULLANICI EKLEME (Öğrenci & Öğretmen) ---
@@ -30,10 +30,15 @@ export async function createSystemUser(formData: FormData) {
   const role = formData.get("role") as "student" | "teacher";
   const fullName = formData.get("fullName") as string;
   const password = formData.get("password") as string || "123456";
-  
+
   // Öğrenciyse Okul No, Öğretmense E-posta alacağız
-  const identifier = formData.get("identifier") as string; 
-  
+  const identifier = formData.get("identifier") as string;
+
+  // Yeni alanlar (Phase 1)
+  const parentName = formData.get("parentName") as string | null;
+  const parentPhone = formData.get("parentPhone") as string | null;
+  const subjectField = formData.get("subjectField") as string | null;
+
   let email = "";
   let schoolNumber = null;
 
@@ -55,18 +60,20 @@ export async function createSystemUser(formData: FormData) {
 
   if (authError) {
     console.error("Kullanıcı oluşturma hatası:", authError.message);
-    // Hata yönetimi burada yapılabilir
     return;
   }
 
   if (authUser.user) {
-    // 2. Profil Tablosuna İşle
+    // 2. Profil Tablosuna İşle (Phase 1: Yeni alanlarla birlikte)
     await supabaseAdmin.from("profiles").upsert({
-       id: authUser.user.id,
-       email: email,
-       school_number: schoolNumber, // Öğretmense NULL gider, sorun yok
-       role: role,
-       // full_name: fullName // Eğer tablonda varsa aç
+      id: authUser.user.id,
+      email: email,
+      school_number: schoolNumber,
+      role: role,
+      full_name: fullName,
+      parent_name: role === "student" ? parentName : null,
+      parent_phone: role === "student" ? parentPhone : null,
+      subject_field: role === "teacher" ? subjectField : null,
     });
   }
 
@@ -76,16 +83,16 @@ export async function createSystemUser(formData: FormData) {
 
 // --- KULLANICI SİLME ---
 export async function deleteUser(formData: FormData) {
-    const supabaseAdmin = createAdminClient();
-    const userId = formData.get("userId") as string;
-    
-    // Auth'dan sil (Profil tablosundan otomatik silinir - Cascade varsa)
-    await supabaseAdmin.auth.admin.deleteUser(userId);
-    
-    // Garanti olsun diye profilden de silelim
-    await supabaseAdmin.from("profiles").delete().eq("id", userId);
+  const supabaseAdmin = createAdminClient();
+  const userId = formData.get("userId") as string;
 
-    revalidatePath("/admin/users");
+  // Auth'dan sil (Profil tablosundan otomatik silinir - Cascade varsa)
+  await supabaseAdmin.auth.admin.deleteUser(userId);
+
+  // Garanti olsun diye profilden de silelim
+  await supabaseAdmin.from("profiles").delete().eq("id", userId);
+
+  revalidatePath("/admin/users");
 }
 // --- YENİ EKLENENLER: DERS İŞLEMLERİ ---
 
@@ -97,7 +104,7 @@ export async function createLesson(formData: FormData) {
   const description = formData.get("description") as string;
   const meetLink = formData.get("meetLink") as string;
   const videoUrl = formData.get("videoUrl") as string;
-  
+
   // DOSYA YÜKLEME İŞLEMİ BURADA BAŞLIYOR
   const file = formData.get("file") as File;
   let fileUrl = null;
@@ -105,7 +112,7 @@ export async function createLesson(formData: FormData) {
   if (file && file.size > 0) {
     // Dosya ismini benzersiz yap (çakışmasın diye tarih ekliyoruz)
     const fileName = `${Date.now()}-${file.name}`;
-    
+
     // Supabase Storage'a yükle
     const { data: uploadData, error: uploadError } = await supabase
       .storage
@@ -121,7 +128,7 @@ export async function createLesson(formData: FormData) {
         .storage
         .from("lesson-files")
         .getPublicUrl(fileName);
-        
+
       fileUrl = publicUrl;
     }
   }
@@ -162,26 +169,26 @@ export async function toggleLessonStatus(formData: FormData) {
 // --- DERS GÜNCELLEME (YENİ) ---
 export async function updateLesson(formData: FormData) {
   const supabase = await createClient();
-  
+
   const lessonId = formData.get("lessonId") as string;
   const classId = formData.get("classId") as string;
-  
+
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const meetLink = formData.get("meetLink") as string;
   const videoUrl = formData.get("videoUrl") as string;
 
   // 1. Güncellenecek verileri hazırla
-  const updates: any = { 
-    title, 
-    description, 
-    meet_link: meetLink, 
-    video_url: videoUrl 
+  const updates: any = {
+    title,
+    description,
+    meet_link: meetLink,
+    video_url: videoUrl
   };
 
   // 2. Eğer YENİ bir dosya seçildiyse, onu da yükle ve güncelle
   const file = formData.get("file") as File;
-  
+
   if (file && file.size > 0) {
     const fileName = `${Date.now()}-${file.name}`;
     const { error: uploadError } = await supabase.storage
@@ -192,7 +199,7 @@ export async function updateLesson(formData: FormData) {
       const { data: { publicUrl } } = supabase.storage
         .from("lesson-files")
         .getPublicUrl(fileName);
-      
+
       updates.file_url = publicUrl; // Yeni linki güncelleme listesine ekle
     }
   }
@@ -204,7 +211,7 @@ export async function updateLesson(formData: FormData) {
     .eq("id", lessonId);
 
   if (error) console.error("Güncelleme hatası:", error);
-  
+
   revalidatePath(`/admin/classes/${classId}`);
   redirect(`/admin/classes/${classId}`);
 }
@@ -250,4 +257,157 @@ export async function deleteLesson(formData: FormData) {
 
   if (error) console.log("Ders silme hatası:", error);
   revalidatePath(`/admin/classes/${classId}`);
+}
+
+// ============================================
+// PAYMENT MANAGEMENT ACTIONS (Phase 1)
+// ============================================
+
+export async function createPaymentAgreement(formData: FormData) {
+  const supabase = await createClient();
+
+  const studentId = formData.get("studentId") as string;
+  const agreedAmount = parseFloat(formData.get("agreedAmount") as string);
+  const notes = formData.get("notes") as string;
+  const title = formData.get("title") as string; // Yeni alan
+
+  const { error } = await supabase.from("payments").insert([{
+    student_id: studentId,
+    agreed_amount: agreedAmount,
+    paid_amount: 0,
+    notes: notes,
+    title: title || "Genel Anlaşma", // Varsayılan değer
+  }]);
+
+  if (error) {
+    console.error("Ödeme anlaşması oluşturma hatası:", error);
+  }
+
+  revalidatePath("/admin/finance");
+  revalidatePath(`/admin/finance/${studentId}`);
+  redirect(`/admin/finance/${studentId}`);
+}
+
+export async function addPaymentTransaction(formData: FormData) {
+  const supabase = await createClient();
+
+  const paymentId = formData.get("paymentId") as string;
+  const amount = parseFloat(formData.get("amount") as string);
+  const paymentDate = formData.get("paymentDate") as string;
+  const paymentMethod = formData.get("paymentMethod") as string;
+  const notes = formData.get("notes") as string;
+  const studentId = formData.get("studentId") as string; // For revalidation
+
+  // Get current user (admin) for tracking
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // 1. Transaction kaydet
+  const { error: txError } = await supabase.from("payment_transactions").insert([{
+    payment_id: paymentId,
+    amount: amount,
+    payment_date: paymentDate,
+    payment_method: paymentMethod,
+    notes: notes,
+    created_by: user?.id,
+  }]);
+
+  if (txError) {
+    console.error("Ödeme kayıt hatası:", txError);
+    return;
+  }
+
+  // 2. Ana ödeme kaydındaki (payments table) paid_amount'u güncelleme (TRIGGER update_payment_balance TARAFINDAN YAPILIYOR)
+  // Manuel güncelleme çift sayıma neden olduğu için kaldırıldı.
+
+  revalidatePath("/admin/finance");
+  revalidatePath(`/admin/finance/${studentId}`);
+}
+
+export async function updatePaymentAgreement(formData: FormData) {
+  const supabase = await createClient();
+
+  const paymentId = formData.get("paymentId") as string;
+  const agreedAmount = parseFloat(formData.get("agreedAmount") as string);
+  const notes = formData.get("notes") as string;
+  const title = formData.get("title") as string; // Yeni alan
+  const studentId = formData.get("studentId") as string;
+
+  const { error } = await supabase
+    .from("payments")
+    .update({
+      agreed_amount: agreedAmount,
+      notes: notes,
+      title: title,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", paymentId);
+
+  if (error) {
+    console.error("Ödeme güncelleme hatası:", error);
+  }
+
+  revalidatePath("/admin/finance");
+  revalidatePath(`/admin/finance/${studentId}`);
+}
+
+export async function deletePaymentTransaction(formData: FormData) {
+  const supabase = await createClient();
+
+  const transactionId = formData.get("transactionId") as string;
+  const studentId = formData.get("studentId") as string;
+
+  const { error } = await supabase
+    .from("payment_transactions")
+    .delete()
+    .eq("id", transactionId);
+
+  if (error) {
+    console.error("Ödeme silme hatası:", error);
+  }
+
+  revalidatePath("/admin/finance");
+  revalidatePath(`/admin/finance/${studentId}`);
+}
+
+// ============================================
+// EXPENSE MANAGEMENT ACTIONS (Phase 1.7)
+// ============================================
+
+export async function createExpense(formData: FormData) {
+  const supabase = await createClient();
+
+  const title = formData.get("title") as string;
+  const amount = parseFloat(formData.get("amount") as string);
+  const paymentDate = formData.get("paymentDate") as string;
+  const category = formData.get("category") as string;
+  const description = formData.get("description") as string;
+  const teacherId = formData.get("teacherId") as string | null;
+
+  const { error } = await supabase.from("expenses").insert([{
+    title,
+    amount,
+    payment_date: paymentDate,
+    category,
+    description,
+    teacher_id: teacherId || null,
+  }]);
+
+  if (error) {
+    console.error("Gider ekleme hatası:", error);
+  }
+
+  revalidatePath("/admin/finance");
+}
+
+export async function deleteExpense(formData: FormData) {
+  const supabase = await createClient();
+  const expenseId = formData.get("expenseId") as string;
+
+  const { error } = await supabase.from("expenses").delete().eq("id", expenseId);
+
+  if (error) {
+    console.error("Gider silme hatası:", error);
+  }
+
+  revalidatePath("/admin/finance");
 }
