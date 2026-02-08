@@ -16,6 +16,7 @@ interface Payment {
     student_id: string;
     agreed_amount: number;
     paid_amount: number;
+    notes: string | null;
 }
 
 interface AddPaymentButtonProps {
