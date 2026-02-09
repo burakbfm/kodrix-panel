@@ -128,3 +128,97 @@ export interface ClassProgramWithDetails extends ClassProgram {
         full_name: string;
     } | null;
 }
+
+// ============================================
+// ATTENDANCE & CLASS MANAGEMENT TYPES
+// ============================================
+
+export type AttendanceStatus = 'present' | 'absent' | 'late' | 'excused';
+export type ScheduleStatus = 'scheduled' | 'completed' | 'cancelled' | 'postponed';
+
+// Ders Takvimi
+export interface ClassSchedule {
+    id: string;
+    class_id: string;
+    class_program_id: string | null;
+    lesson_id: string | null;
+    scheduled_date: string; // Date
+    start_time: string | null; // Time
+    end_time: string | null; // Time
+    teacher_id: string | null;
+    status: ScheduleStatus;
+    notes: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+// Yoklama Kaydı
+export interface Attendance {
+    id: string;
+    class_id: string;
+    student_id: string;
+    date: string; // Date
+    status: AttendanceStatus;
+    notes: string | null;
+    marked_by: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+// Öğrenci Değerlendirmesi
+export interface StudentEvaluation {
+    id: string;
+    student_id: string;
+    class_id: string;
+    teacher_id: string;
+    academic_score: number | null; // 0-100
+    behavior_score: number | null; // 0-10
+    participation_score: number | null; // 0-10
+    strengths: string | null;
+    areas_for_improvement: string | null;
+    general_comments: string | null;
+    evaluation_period: string | null;
+    evaluation_date: string; // Date
+    created_at: string;
+    updated_at: string;
+}
+
+// Genişletilmiş Tipler
+export interface AttendanceWithStudent extends Attendance {
+    student: {
+        id: string;
+        full_name: string;
+        school_number: string | null;
+    };
+}
+
+export interface ClassScheduleWithDetails extends ClassSchedule {
+    lesson: Lesson | null;
+    teacher: {
+        id: string;
+        full_name: string;
+    } | null;
+}
+
+export interface StudentEvaluationWithDetails extends StudentEvaluation {
+    student: {
+        id: string;
+        full_name: string;
+        school_number: string | null;
+    };
+    teacher: {
+        id: string;
+        full_name: string;
+    };
+}
+
+// Öğrenci Analiz İstatistikleri
+export interface StudentAnalytics {
+    student_id: string;
+    total_classes: number;
+    attendance_rate: number; // Percentage
+    total_evaluations: number;
+    average_academic_score: number | null;
+    average_behavior_score: number | null;
+    average_participation_score: number | null;
+}

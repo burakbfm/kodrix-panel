@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, DollarSign, BookOpen, LogOut, CreditCard, User, GraduationCap } from "lucide-react";
+import { LayoutDashboard, Users, DollarSign, BookOpen, LogOut, CreditCard, User, GraduationCap, FileText } from "lucide-react";
 import { SidebarLogo } from "@/components/SidebarLogo";
 
 type Role = "admin" | "teacher" | "student";
@@ -18,8 +18,9 @@ export function Sidebar({ role }: SidebarProps) {
     const menuConfig = {
         admin: [
             { href: "/admin", label: "Genel Bakış", icon: LayoutDashboard },
-            { href: "/admin/classes", label: "Sınıflar & Dersler", icon: BookOpen },
+            { href: "/admin/classes", label: "Sınıflar", icon: BookOpen },
             { href: "/admin/programs", label: "Programlar", icon: GraduationCap },
+            { href: "/admin/quizzes", label: "Quizler", icon: FileText },
             { href: "/admin/users", label: "Kullanıcılar", icon: Users },
             { href: "/admin/finance", label: "Finans", icon: DollarSign },
         ],

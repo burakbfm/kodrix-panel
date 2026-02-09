@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createClass } from "../actions";
 import Link from "next/link";
-import { BookOpen, Users, FileText, Plus } from "lucide-react";
+import { BookOpen, Users, FileText, Plus, GraduationCap, UserCircle } from "lucide-react";
 import { DeleteClassButton } from "@/components/DeleteClassButton";
 
 export const revalidate = 0;
@@ -9,12 +9,18 @@ export const revalidate = 0;
 export default async function AdminClassesPage() {
   const supabase = await createClient();
 
-  // Fetch classes with enrollment and lesson counts
+  // Fetch classes WITH assigned programs and teachers
   const { data: classes, error } = await supabase
     .from("classes")
     .select(`
       *,
-      enrollments(count)
+      enrollments(count),
+      class_programs(
+        id,
+        is_active,
+        program:programs(id, title),
+        teacher:profiles!class_programs_teacher_id_fkey(id, full_name)
+      )
     `)
     .order("created_at", { ascending: false });
 
@@ -43,7 +49,7 @@ export default async function AdminClassesPage() {
       </div>
 
       {/* Create Class Form */}
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-kodrix-purple dark:border-amber-500 shadow-sm">
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
           Yeni Sınıf Oluştur
         </h2>
@@ -56,7 +62,7 @@ export default async function AdminClassesPage() {
               placeholder="Örn: 12-A Sayısal veya Python Grubu"
               className="flex-1 px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 focus:border-transparent"
             />
-            <button className="bg-kodrix-purple dark:bg-amber-500 hover:bg-kodrix-purple/90 dark:hover:bg-amber-600 text-white dark:text-gray-900 font-bold px-6 py-3 rounded-lg transition flex items-center gap-2">
+            <button className="bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:text-gray-900 font-bold px-6 py-3 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center gap-2">
               <Plus className="w-5 h-5" />
               Oluştur
             </button>
@@ -74,57 +80,86 @@ export default async function AdminClassesPage() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {classes?.map((cls: any) => (
-            <div
-              key={cls.id}
-              className="bg-white dark:bg-gray-900 border border-kodrix-purple dark:border-amber-500 rounded-xl p-6 flex flex-col justify-between hover:shadow-lg transition-all group shadow-sm"
-            >
+          {classes?.map((cls: any) => {
+            // Get active program and teacher info
+            const activeProgram = cls.class_programs?.find((cp: any) => cp.is_active);
+            const enrollmentCount = cls.enrollments?.[0]?.count || 0;
 
-              {/* Header */}
-              <div className="mb-4">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-kodrix-purple dark:group-hover:text-amber-500 transition">
-                  {cls.name}
-                </h3>
-                <p className="text-gray-500 dark:text-gray-600 text-[10px] font-mono truncate">
-                  ID: {cls.id}
-                </p>
-              </div>
+            return (
+              <div
+                key={cls.id}
+                className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-800 rounded-xl p-6 flex flex-col justify-between hover:shadow-xl hover:border-kodrix-purple dark:hover:border-amber-500 transition-all group"
+              >
+                {/* Header */}
+                <div>
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-kodrix-purple dark:group-hover:text-amber-500 transition">
+                      {cls.name}
+                    </h3>
+                    <DeleteClassButton classId={cls.id} className={cls.name} />
+                  </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                {/* Student Count */}
-                <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
-                  <div className="text-gray-600 dark:text-gray-400 text-xs mb-1">Öğrenci</div>
-                  <div className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-1">
-                    <Users className="w-4 h-4" />
-                    {cls.enrollments?.[0]?.count || 0}
+                  {/* Program & Teacher Info */}
+                  <div className="space-y-2 mb-4 text-sm">
+                    {activeProgram ? (
+                      <>
+                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                          <GraduationCap className="w-4 h-4 text-purple-500 dark:text-amber-500" />
+                          <span className="font-medium">
+                            {activeProgram.program?.title || "Program"}
+                          </span>
+                        </div>
+                        {activeProgram.teacher && (
+                          <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                            <UserCircle className="w-4 h-4 text-blue-500" />
+                            <span>{activeProgram.teacher.full_name}</span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-gray-400 dark:text-gray-600 italic text-xs">
+                        Henüz program atanmamış
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    {/* Student Count */}
+                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800 text-center">
+                      <div className="text-blue-600 dark:text-blue-400 text-xs mb-1 font-semibold">
+                        Öğrenci
+                      </div>
+                      <div className="text-xl font-bold text-blue-700 dark:text-blue-300 flex items-center justify-center gap-1">
+                        <Users className="w-4 h-4" />
+                        {enrollmentCount}
+                      </div>
+                    </div>
+
+                    {/* Lesson Count - Placeholder for now */}
+                    <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800 text-center">
+                      <div className="text-green-600 dark:text-green-400 text-xs mb-1 font-semibold">
+                        Program
+                      </div>
+                      <div className="text-xl font-bold text-green-700 dark:text-green-300 flex items-center justify-center gap-1">
+                        <FileText className="w-4 h-4" />
+                        {cls.class_programs?.length || 0}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Lesson Count */}
-                <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
-                  <div className="text-gray-600 dark:text-gray-400 text-xs mb-1">Ders</div>
-                  <div className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-1">
-                    <FileText className="w-4 h-4" />
-                    {cls.lessons?.[0]?.count || 0}
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex gap-3 mt-auto">
+                {/* Action Button */}
                 <Link
                   href={`/admin/classes/${cls.id}`}
-                  className="flex-1 bg-kodrix-purple dark:bg-amber-500 hover:bg-kodrix-purple/90 dark:hover:bg-amber-600 text-white dark:text-gray-900 text-center py-3 rounded-lg font-bold text-sm transition shadow-sm"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:text-gray-900 rounded-lg flex items-center justify-center gap-2 hover:shadow-lg hover:scale-105 transition-all duration-200 font-semibold"
                 >
-                  Yönet & Ders Ekle →
+                  Yönet & Detaylar
+                  <Plus className="w-4 h-4" />
                 </Link>
-
-                {/* Delete Button */}
-                <DeleteClassButton classId={cls.id} className={cls.name} />
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* Empty State */}
           {classes?.length === 0 && (
