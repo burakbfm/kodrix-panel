@@ -35,12 +35,12 @@ export default async function AdminLayout({
             < div className="flex-1 flex flex-col overflow-hidden ml-64" >
 
                 {/* TOP HEADER */}
-                < header className="h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-8 transition-colors" >
+                < header className="h-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-8 transition-colors sticky top-0 z-40" >
                     <div>
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
                             Admin Panel
                         </h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                             Hoş geldiniz, {profile?.full_name || profile?.email}
                         </p>
                     </div>
@@ -51,8 +51,10 @@ export default async function AdminLayout({
                 </header >
 
                 {/* PAGE CONTENT */}
-                < main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-950 transition-colors" >
-                    {children}
+                < main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-950 transition-colors p-8" >
+                    <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {children}
+                    </div>
                 </main >
             </div >
         </div >

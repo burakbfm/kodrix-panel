@@ -101,10 +101,11 @@ export default async function NewQuizPage() {
                             </label>
                             <select
                                 name="difficulty"
+                                defaultValue="medium"
                                 className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
                             >
                                 <option value="easy">Kolay</option>
-                                <option value="medium" selected>Orta</option>
+                                <option value="medium">Orta</option>
                                 <option value="hard">Zor</option>
                             </select>
                         </div>

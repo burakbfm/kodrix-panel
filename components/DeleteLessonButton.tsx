@@ -1,49 +1,52 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
 import { useState } from "react";
-import { deleteLesson } from "@/app/admin/actions";
+import { Trash2 } from "lucide-react";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
+import { deleteProgramLesson } from "@/app/admin/lessons/actions";
 
 interface DeleteLessonButtonProps {
-    programId: string;
-    classId?: string; // Optional because we use this in programs too
     lessonId: string;
+    programId: string;
+    lessonTitle: string;
 }
 
-export function DeleteLessonButton({ programId, lessonId }: DeleteLessonButtonProps) {
+export default function DeleteLessonButton({ lessonId, programId, lessonTitle }: DeleteLessonButtonProps) {
     const [isDeleting, setIsDeleting] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
-    const handleDelete = async (e: React.MouseEvent) => {
-        e.preventDefault(); // Link tıklamasını engelle
-
-        if (!confirm("⚠️ Bu dersi silmek istediğinize emin misiniz?")) {
-            return;
-        }
-
+    async function handleDelete() {
         setIsDeleting(true);
         try {
-            // We need a specific action for deleting program lessons if logic differs, 
-            // but generic remove row is fine.
-            // However, deleteLesson in actions.ts expects classId currently for revalidation.
-            // We should create a specifically tailored action or update the existing one.
-            // Let's call a new wrapper action to avoid confusion.
-            await deleteLesson(programId, lessonId);
+            await deleteProgramLesson(lessonId, programId);
+            setShowConfirm(false);
+            // Router refresh or revalidate is handled by the server action
         } catch (error) {
-            console.error("Error deleting lesson:", error);
-            alert("Ders silinirken bir hata oluştu.");
+            console.error("Delete error:", error);
+            alert("Silme işlemi başarısız oldu.");
         } finally {
             setIsDeleting(false);
         }
-    };
+    }
 
     return (
-        <button
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="p-1.5 text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 transition ml-2"
-            title="Dersi Sil"
-        >
-            <Trash2 className="w-4 h-4" />
-        </button>
+        <>
+            <button
+                onClick={() => setShowConfirm(true)}
+                className="p-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
+                title="Dersi Sil"
+            >
+                <Trash2 className="w-4 h-4" />
+            </button>
+
+            <DeleteConfirmDialog
+                isOpen={showConfirm}
+                onClose={() => setShowConfirm(false)}
+                onConfirm={handleDelete}
+                title="Dersi Sil"
+                message={`"${lessonTitle}" adlı dersi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.`}
+                isPending={isDeleting}
+            />
+        </>
     );
 }

@@ -23,15 +23,26 @@ export default async function ClassSettingsPage({ params }: PageProps) {
         notFound();
     }
 
+    // Get all teachers for dropdown
+    const { data: teachers } = await supabase
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("role", ["admin", "teacher"])
+        .order("full_name", { ascending: true });
+
     async function updateClass(formData: FormData) {
         "use server";
         const supabase = await createClient();
 
         const name = formData.get("name") as string;
+        const teacherId = formData.get("teacher_id") as string || null;
 
         const { error } = await supabase
             .from("classes")
-            .update({ name })
+            .update({
+                name,
+                teacher_id: teacherId
+            })
             .eq("id", id);
 
         if (error) {
@@ -80,6 +91,32 @@ export default async function ClassSettingsPage({ params }: PageProps) {
                             defaultValue={classData.name}
                             className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 focus:border-transparent transition outline-none"
                         />
+                    </div>
+
+                    {/* Teacher Assignment */}
+                    <div>
+                        <label
+                            htmlFor="teacher_id"
+                            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+                        >
+                            Öğretmen
+                        </label>
+                        <select
+                            id="teacher_id"
+                            name="teacher_id"
+                            defaultValue={classData.teacher_id || ""}
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 focus:border-transparent transition outline-none"
+                        >
+                            <option value="">Öğretmen atanmamış</option>
+                            {teachers?.map((teacher: any) => (
+                                <option key={teacher.id} value={teacher.id}>
+                                    {teacher.full_name} ({teacher.email})
+                                </option>
+                            ))}
+                        </select>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Bu sınıfa bir öğretmen atayın
+                        </p>
                     </div>
 
                     {/* Class ID - Read only */}

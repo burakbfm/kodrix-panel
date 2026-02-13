@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Plus, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2, Edit } from "lucide-react";
 import { revalidatePath } from "next/cache";
+import DeleteLessonButton from "./DeleteLessonButton";
 
 interface PageProps {
     params: Promise<{ id: string; moduleId: string }>;
@@ -30,45 +32,21 @@ export default async function ModuleLessonsPage({ params }: PageProps) {
         .eq("module_id", moduleId)
         .order("order", { ascending: true });
 
-    async function addLesson(formData: FormData) {
-        "use server";
-        const supabase = await createClient();
-
-        const maxOrder = lessons && lessons.length > 0
-            ? Math.max(...lessons.map(l => l.order || 0))
-            : 0;
-
-        const lessonData = {
-            module_id: moduleId,
-            title: formData.get("title") as string,
-            description: formData.get("description") as string,
-            content: formData.get("content") as string,
-            duration_minutes: parseInt(formData.get("duration_minutes") as string) || null,
-            order: maxOrder + 1,
-        };
-
-        const { error } = await supabase.from("lessons").insert(lessonData);
-
-        if (error) {
-            console.error("Ders ekleme hatası:", error);
-            return;
-        }
-
-        revalidatePath(`/admin/programs/${id}/modules/${moduleId}`);
-    }
-
     async function deleteLesson(formData: FormData) {
         "use server";
-        const supabase = await createClient();
         const lessonId = formData.get("lesson_id") as string;
+        console.log("🔥 Ders silme işlemi başladı (Admin Client):", lessonId);
+
+        const supabase = createAdminClient();
 
         const { error } = await supabase.from("lessons").delete().eq("id", lessonId);
 
         if (error) {
-            console.error("Ders silme hatası:", error);
+            console.error("❌ Ders silme veritabanı hatası:", error);
             return;
         }
 
+        console.log("✅ Ders başarıyla silindi");
         revalidatePath(`/admin/programs/${id}/modules/${moduleId}`);
     }
 
@@ -91,70 +69,21 @@ export default async function ModuleLessonsPage({ params }: PageProps) {
                 </p>
             </div>
 
-            {/* Add Lesson Form */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            {/* Add Lesson Button */}
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 rounded-xl border-2 border-dashed border-purple-300 dark:border-gray-700 p-8 text-center">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                     Yeni Ders Ekle
                 </h2>
-                <form action={addLesson} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Ders Başlığı *
-                        </label>
-                        <input
-                            type="text"
-                            name="title"
-                            required
-                            placeholder="Örn: Değişkenler ve Veri Tipleri"
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Kısa Açıklama
-                        </label>
-                        <textarea
-                            name="description"
-                            rows={2}
-                            placeholder="Dersin kısa açıklaması..."
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none resize-none"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Ders İçeriği
-                        </label>
-                        <textarea
-                            name="content"
-                            rows={6}
-                            placeholder="Ders içeriği, video linkler, materyaller..."
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none resize-none"
-                        />
-                    </div>
-
-                    <div className="w-48">
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Süre (Dakika)
-                        </label>
-                        <input
-                            type="number"
-                            name="duration_minutes"
-                            min="1"
-                            placeholder="45"
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:shadow-lg transition font-semibold flex items-center gap-2"
-                    >
-                        <Plus className="w-5 h-5" />
-                        Ders Ekle
-                    </button>
-                </form>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                    Ders linki, dosya ekleme ve detaylı içerik için detaylı forma gidin
+                </p>
+                <Link
+                    href={`/admin/programs/${id}/modules/${moduleId}/lessons/new`}
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 text-white rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 font-bold text-lg"
+                >
+                    <Plus className="w-6 h-6" />
+                    Ders Oluştur
+                </Link>
             </div>
 
             {/* Lessons List */}
@@ -192,16 +121,21 @@ export default async function ModuleLessonsPage({ params }: PageProps) {
                                         </div>
                                     </div>
 
-                                    <form action={deleteLesson}>
-                                        <input type="hidden" name="lesson_id" value={lesson.id} />
-                                        <button
-                                            type="submit"
-                                            className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 rounded-lg transition"
-                                            title="Sil"
+                                    <div className="flex gap-2">
+                                        <Link
+                                            href={`/admin/programs/${id}/modules/${moduleId}/lessons/${lesson.id}/edit`}
+                                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
+                                            title="Düzenle"
                                         >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </form>
+                                            <Edit className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                                        </Link>
+
+                                        <DeleteLessonButton
+                                            lessonId={lesson.id}
+                                            lessonTitle={lesson.title}
+                                            deleteAction={deleteLesson}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         ))}

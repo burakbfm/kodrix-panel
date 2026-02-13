@@ -1,9 +1,30 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { BookOpen, Plus, Edit, Trash2, Layers } from "lucide-react";
+import { revalidatePath } from "next/cache";
+import ProgramCard from "./ProgramCard";
 
 export default async function ProgramsPage() {
     const supabase = await createClient();
+
+    // Delete program server action
+    async function deleteProgram(formData: FormData) {
+        "use server";
+        const supabase = await createClient();
+        const programId = formData.get("program_id") as string;
+
+        // Delete program (cascading deletes will handle modules and lessons)
+        const { error } = await supabase
+            .from("programs")
+            .delete()
+            .eq("id", programId);
+
+        if (error) {
+            console.error("Delete error:", error);
+        }
+
+        revalidatePath("/admin/programs");
+    }
 
     // Fetch all programs with module and lesson counts
     const { data: programs } = await supabase
@@ -23,22 +44,34 @@ export default async function ProgramsPage() {
                 .select("*", { count: "exact", head: true })
                 .eq("program_id", program.id);
 
+            // Get all module IDs for this program
+            const moduleIds = await supabase
+                .from("modules")
+                .select("id")
+                .eq("program_id", program.id)
+                .then((res) => res.data?.map((m) => m.id) || []);
+
             const { count: lessonCount } = await supabase
                 .from("lessons")
                 .select("*", { count: "exact", head: true })
-                .in(
-                    "module_id",
-                    await supabase
-                        .from("modules")
-                        .select("id")
-                        .eq("program_id", program.id)
-                        .then((res) => res.data?.map((m) => m.id) || [])
-                );
+                .in("module_id", moduleIds);
+
+            // Get total duration from all lessons
+            const { data: lessons } = await supabase
+                .from("lessons")
+                .select("duration_minutes")
+                .in("module_id", moduleIds);
+
+            const totalDuration = lessons?.reduce(
+                (sum, lesson) => sum + (lesson.duration_minutes || 0),
+                0
+            ) || 0;
 
             return {
                 ...program,
                 module_count: moduleCount || 0,
                 lesson_count: lessonCount || 0,
+                total_duration_minutes: totalDuration,
             };
         })
     );
@@ -68,61 +101,11 @@ export default async function ProgramsPage() {
             {programsWithCounts && programsWithCounts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {programsWithCounts.map((program: any) => (
-                        <div
+                        <ProgramCard
                             key={program.id}
-                            className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 hover:shadow-lg transition"
-                        >
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 flex items-center justify-center">
-                                    <BookOpen className="w-6 h-6 text-white dark:text-gray-900" />
-                                </div>
-                                <div className="flex gap-2">
-                                    <Link
-                                        href={`/admin/programs/${program.id}`}
-                                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
-                                        title="Düzenle"
-                                    >
-                                        <Edit className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                                {program.title}
-                            </h3>
-
-                            {program.description && (
-                                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
-                                    {program.description}
-                                </p>
-                            )}
-
-                            <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
-                                <div className="flex items-center gap-1">
-                                    <Layers className="w-4 h-4" />
-                                    <span>{program.module_count} Modül</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                    <BookOpen className="w-4 h-4" />
-                                    <span>{program.lesson_count} Ders</span>
-                                </div>
-                            </div>
-
-                            {program.duration_weeks && (
-                                <div className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                                    ⏱️ {program.duration_weeks} hafta
-                                </div>
-                            )}
-
-                            <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
-                                <Link
-                                    href={`/admin/programs/${program.id}`}
-                                    className="text-kodrix-purple dark:text-amber-500 hover:underline font-semibold text-sm"
-                                >
-                                    Detay ve Düzenle →
-                                </Link>
-                            </div>
-                        </div>
+                            program={program}
+                            deleteAction={deleteProgram}
+                        />
                     ))}
                 </div>
             ) : (

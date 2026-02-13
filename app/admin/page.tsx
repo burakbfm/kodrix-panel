@@ -40,13 +40,16 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
         {/* Students Card */}
-        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-kodrix-purple dark:border-amber-500 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
-              <Users className="w-6 h-6 text-blue-500" />
+        <Link href="/admin/users" className="group">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <span className="text-xs font-medium px-2 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">Toplam</span>
             </div>
             <div>
-              <h3 className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+              <h3 className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                 Toplam Öğrenci
               </h3>
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
@@ -54,16 +57,19 @@ export default async function AdminDashboard() {
               </p>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Classes Card */}
-        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-kodrix-purple dark:border-amber-500 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center">
-              <BookOpen className="w-6 h-6 text-purple-500" />
+        <Link href="/admin/classes" className="group">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <BookOpen className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              </div>
+              <span className="text-xs font-medium px-2 py-1 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400">Aktif</span>
             </div>
             <div>
-              <h3 className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+              <h3 className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                 Aktif Sınıflar
               </h3>
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
@@ -71,16 +77,19 @@ export default async function AdminDashboard() {
               </p>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Teachers Card */}
-        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-kodrix-purple dark:border-amber-500 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-green-500" />
+        <Link href="/admin/users?role=teacher" className="group">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+              </div>
+              <span className="text-xs font-medium px-2 py-1 rounded-full bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400">Eğitmen</span>
             </div>
             <div>
-              <h3 className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+              <h3 className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                 Öğretmenler
               </h3>
               <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
@@ -88,7 +97,7 @@ export default async function AdminDashboard() {
               </p>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Financial Overview */}

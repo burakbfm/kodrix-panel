@@ -444,3 +444,24 @@ export async function deleteModule(programId: string, moduleId: string) {
 
   revalidatePath(`/admin/programs/${programId}`);
 }
+
+// ============================================
+// QUIZ MANAGEMENT
+// ============================================
+
+export async function deleteQuiz(formData: FormData) {
+  const supabase = await createClient();
+  const quizId = formData.get("quizId") as string;
+
+  const { error } = await supabase
+    .from("quizzes")
+    .delete()
+    .eq("id", quizId);
+
+  if (error) {
+    console.error("Quiz silme hatası:", error);
+    throw error;
+  }
+
+  revalidatePath("/admin/quizzes");
+}

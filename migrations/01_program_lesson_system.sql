@@ -73,7 +73,7 @@ BEGIN
     
     -- Delete any existing lessons from previous programs
     DELETE FROM class_lessons 
-    WHERE class_id = NEW.class_id AND program_id != NEW.program_id;
+    WHERE class_id = NEW.class_id;
     
     -- Copy all lessons from the program's modules
     INSERT INTO class_lessons (
@@ -83,6 +83,7 @@ BEGIN
       title,
       module_name,
       description,
+      lesson_date,
       duration_minutes,
       is_active,
       teacher_id,
@@ -96,9 +97,10 @@ BEGIN
       l.title,
       m.title,
       l.description,
+      COALESCE(NEW.start_date, CURRENT_DATE) + INTERVAL '1 day' * (ROW_NUMBER() OVER (ORDER BY m.order, l.order) - 1),
       l.duration_minutes,
       false, -- Initially inactive
-      NEW.teacher_id,
+      NEW.teacher_id, -- Use program teacher
       TIMEZONE('utc', NOW()),
       TIMEZONE('utc', NOW())
     FROM lessons l
@@ -107,10 +109,11 @@ BEGIN
     ORDER BY m.order, l.order;
     
     -- Log the copy operation
-    RAISE NOTICE 'Copied % lessons from program % to class %', 
+    RAISE NOTICE 'Copied % lessons from program % to class % with teacher %', 
       (SELECT COUNT(*) FROM lessons l JOIN modules m ON l.module_id = m.id WHERE m.program_id = NEW.program_id),
       NEW.program_id,
-      NEW.class_id;
+      NEW.class_id,
+      NEW.teacher_id;
   END IF;
   
   RETURN NEW;

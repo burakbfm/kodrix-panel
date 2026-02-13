@@ -49,22 +49,26 @@ export default async function AdminClassesPage() {
       </div>
 
       {/* Create Class Form */}
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+      <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
+          <Plus className="w-5 h-5 text-kodrix-purple dark:text-amber-500" />
           Yeni Sınıf Oluştur
         </h2>
         <div className="flex gap-4">
-          <form action={createClass} className="flex-1 flex gap-4">
-            <input
-              name="name"
-              type="text"
-              required
-              placeholder="Örn: 12-A Sayısal veya Python Grubu"
-              className="flex-1 px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 focus:border-transparent"
-            />
-            <button className="bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:text-gray-900 font-bold px-6 py-3 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center gap-2">
+          <form action={createClass} className="flex-1 flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                name="name"
+                type="text"
+                required
+                placeholder="Örn: 12-A Sayısal veya Python Grubu"
+                className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-kodrix-purple/20 focus:border-kodrix-purple transition-all outline-none"
+              />
+            </div>
+            <button className="bg-gradient-to-r from-kodrix-purple to-purple-800 dark:from-amber-500 dark:to-amber-600 text-white dark:text-gray-900 font-bold px-8 py-3 rounded-xl hover:shadow-lg hover:shadow-kodrix-purple/20 hover:scale-[1.02] transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap">
               <Plus className="w-5 h-5" />
-              Oluştur
+              Sınıf Ekle
             </button>
           </form>
         </div>
@@ -72,10 +76,10 @@ export default async function AdminClassesPage() {
 
       {/* Classes Grid */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-3">
           Mevcut Sınıflar
-          <span className="text-sm font-normal text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700">
-            Toplam: {classes?.length || 0}
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm">
+            {classes?.length || 0} Sınıf
           </span>
         </h2>
 
@@ -88,12 +92,14 @@ export default async function AdminClassesPage() {
             return (
               <div
                 key={cls.id}
-                className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-800 rounded-xl p-6 flex flex-col justify-between hover:shadow-xl hover:border-kodrix-purple dark:hover:border-amber-500 transition-all group"
+                className="group bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden hover:border-kodrix-purple/30 dark:hover:border-amber-500/30"
               >
+                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-kodrix-purple to-purple-600 dark:from-amber-400 dark:to-orange-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
                 {/* Header */}
                 <div>
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-kodrix-purple dark:group-hover:text-amber-500 transition">
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-kodrix-purple dark:group-hover:text-amber-500 transition-colors pl-2">
                       {cls.name}
                     </h3>
                     <DeleteClassButton classId={cls.id} className={cls.name} />

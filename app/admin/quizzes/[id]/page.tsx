@@ -1,8 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Plus, Save, Trash2, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2, Image as ImageIcon, Check } from "lucide-react";
 import { revalidatePath } from "next/cache";
+
+interface PageProps {
+    params: Promise<{ id: string }>;
+}
+
+import QuizQuestionForm from "../QuizQuestionForm";
+import Image from "next/image";
+
+// ... imports remain the same, ensure Image is imported if not already
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -31,7 +40,7 @@ export default async function QuizDetailPage({ params }: PageProps) {
       answers:quiz_answers(*)
     `)
         .eq("quiz_id", id)
-        .order("order", { ascending: true });
+        .order("order_index", { ascending: true });
 
     async function updateQuiz(formData: FormData) {
         "use server";
@@ -56,57 +65,6 @@ export default async function QuizDetailPage({ params }: PageProps) {
         if (error) {
             console.error("Quiz güncelleme hatası:", error);
             return;
-        }
-
-        revalidatePath(`/admin/quizzes/${id}`);
-    }
-
-    async function addQuestion(formData: FormData) {
-        "use server";
-        const supabase = await createClient();
-
-        const maxOrder = questions && questions.length > 0
-            ? Math.max(...questions.map(q => q.order || 0))
-            : 0;
-
-        const questionData = {
-            quiz_id: id,
-            question_text: formData.get("question_text") as string,
-            question_type: "multiple_choice",
-            points: parseInt(formData.get("points") as string) || 1,
-            order: maxOrder + 1,
-        };
-
-        const { data: newQuestion, error } = await supabase
-            .from("quiz_questions")
-            .insert(questionData)
-            .select()
-            .single();
-
-        if (error) {
-            console.error("Soru ekleme hatası:", error);
-            return;
-        }
-
-        // Add answers
-        const answerCount = 4; // Default 4 answers
-        const answers = [];
-        for (let i = 1; i <= answerCount; i++) {
-            const answerText = formData.get(`answer_${i}`) as string;
-            const isCorrect = formData.get("correct_answer") === `${i}`;
-
-            if (answerText && answerText.trim()) {
-                answers.push({
-                    question_id: newQuestion.id,
-                    answer_text: answerText,
-                    is_correct: isCorrect,
-                    order: i,
-                });
-            }
-        }
-
-        if (answers.length > 0) {
-            await supabase.from("quiz_answers").insert(answers);
         }
 
         revalidatePath(`/admin/quizzes/${id}`);
@@ -278,117 +236,7 @@ export default async function QuizDetailPage({ params }: PageProps) {
                 </button>
             </form>
 
-            {/* Add Question Form */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                    Yeni Soru Ekle
-                </h2>
-                <form action={addQuestion} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Soru Metni *
-                        </label>
-                        <textarea
-                            name="question_text"
-                            required
-                            rows={3}
-                            placeholder="Sorunuzu buraya yazın..."
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none resize-none"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Cevap 1
-                            </label>
-                            <input
-                                type="text"
-                                name="answer_1"
-                                required
-                                placeholder="Cevap seçeneği..."
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Cevap 2
-                            </label>
-                            <input
-                                type="text"
-                                name="answer_2"
-                                required
-                                placeholder="Cevap seçeneği..."
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Cevap 3
-                            </label>
-                            <input
-                                type="text"
-                                name="answer_3"
-                                placeholder="Cevap seçeneği..."
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Cevap 4
-                            </label>
-                            <input
-                                type="text"
-                                name="answer_4"
-                                placeholder="Cevap seçeneği..."
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Doğru Cevap *
-                            </label>
-                            <select
-                                name="correct_answer"
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                            >
-                                <option value="1">Cevap 1</option>
-                                <option value="2">Cevap 2</option>
-                                <option value="3">Cevap 3</option>
-                                <option value="4">Cevap 4</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Puan
-                            </label>
-                            <input
-                                type="number"
-                                name="points"
-                                min="1"
-                                defaultValue="1"
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                            />
-                        </div>
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:shadow-lg transition font-semibold flex items-center gap-2"
-                    >
-                        <Plus className="w-5 h-5" />
-                        Soru Ekle
-                    </button>
-                </form>
-            </div>
+            <QuizQuestionForm quizId={id} />
 
             {/* Questions List */}
             <div>
@@ -413,24 +261,49 @@ export default async function QuizDetailPage({ params }: PageProps) {
                                                 {question.question_text}
                                             </p>
 
+                                            {question.image_url && (
+                                                <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800">
+                                                    <Image
+                                                        src={question.image_url}
+                                                        alt="Soru görseli"
+                                                        fill
+                                                        className="object-contain bg-gray-50 dark:bg-gray-800"
+                                                    />
+                                                </div>
+                                            )}
+
                                             <div className="space-y-2 mb-3">
                                                 {question.answers?.map((answer: any, answerIndex: number) => (
                                                     <div
                                                         key={answer.id}
-                                                        className={`flex items-center gap-2 p-3 rounded-lg ${answer.is_correct
-                                                                ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
-                                                                : "bg-gray-50 dark:bg-gray-800"
+                                                        className={`flex items-center gap-4 p-3 rounded-lg ${answer.is_correct
+                                                            ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                                                            : "bg-gray-50 dark:bg-gray-800"
                                                             }`}
                                                     >
                                                         <span className="font-semibold text-gray-700 dark:text-gray-300">
                                                             {String.fromCharCode(65 + answerIndex)}.
                                                         </span>
+
+                                                        {answer.image_url && (
+                                                            <div className="relative w-12 h-12 rounded-md overflow-hidden border border-gray-200 dark:border-gray-700 shrink-0">
+                                                                <Image
+                                                                    src={answer.image_url}
+                                                                    alt="Cevap görseli"
+                                                                    fill
+                                                                    className="object-cover"
+                                                                />
+                                                            </div>
+                                                        )}
+
                                                         <span className="text-gray-900 dark:text-gray-100">
                                                             {answer.answer_text}
                                                         </span>
+
                                                         {answer.is_correct && (
-                                                            <span className="ml-auto text-xs font-semibold text-green-700 dark:text-green-400">
-                                                                ✓ Doğru
+                                                            <span className="ml-auto text-xs font-semibold text-green-700 dark:text-green-400 flex items-center gap-1">
+                                                                <Check className="w-4 h-4" />
+                                                                Doğru
                                                             </span>
                                                         )}
                                                     </div>

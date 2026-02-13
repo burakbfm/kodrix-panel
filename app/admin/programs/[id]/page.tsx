@@ -1,8 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus, Edit, Trash2, BookOpen, Save, GripVertical } from "lucide-react";
 import { revalidatePath } from "next/cache";
+import DeleteModuleButton from "./DeleteModuleButton";
+import DeleteLessonButton from "@/components/DeleteLessonButton";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -83,19 +86,42 @@ export default async function ProgramDetailPage({ params }: PageProps) {
 
     async function deleteModule(formData: FormData) {
         "use server";
-        const supabase = await createClient();
         const moduleId = formData.get("module_id") as string;
+        console.log("🔥 Silme işlemi başladı (Admin Client):", moduleId);
 
-        // First delete all lessons in the module
-        await supabase.from("lessons").delete().eq("module_id", moduleId);
+        const supabase = createAdminClient();
 
-        // Then delete the module
-        const { error } = await supabase.from("modules").delete().eq("id", moduleId);
+        // 1. Önce ders referanslarını kontrol et
+        const { count, error: countError } = await supabase
+            .from("lessons")
+            .select("*", { count: "exact", head: true })
+            .eq("module_id", moduleId);
 
-        if (error) {
-            console.error("Modül silme hatası:", error);
+        console.log("📚 Modüle ait ders sayısı:", count, "Hata:", countError);
+
+        // 2. Dersleri sil
+        const { error: lessonsError } = await supabase
+            .from("lessons")
+            .delete()
+            .eq("module_id", moduleId);
+
+        if (lessonsError) {
+            console.error("❌ Ders silme hatası:", lessonsError);
             return;
         }
+        console.log("✅ Dersler silindi");
+
+        // 3. Modülü sil
+        const { error: moduleError } = await supabase
+            .from("modules")
+            .delete()
+            .eq("id", moduleId);
+
+        if (moduleError) {
+            console.error("❌ Modül silme hatası:", moduleError);
+            return;
+        }
+        console.log("✅ Modül başarıyla silindi");
 
         revalidatePath(`/admin/programs/${id}`);
     }
@@ -117,6 +143,26 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                 <p className="text-gray-600 dark:text-gray-400 mt-1">
                     Program detaylarını düzenleyin ve modüller ekleyin
                 </p>
+            </div>
+
+            {/* Overview Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Toplam Modül</div>
+                    <div className="text-3xl font-bold text-kodrix-purple dark:text-amber-500">{modules?.length || 0}</div>
+                </div>
+                <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Toplam Ders</div>
+                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                        {modules?.reduce((total, m) => total + (m.lessons?.length || 0), 0) || 0}
+                    </div>
+                </div>
+                <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Toplam Süre</div>
+                    <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                        {modules?.reduce((total, m) => total + (m.lessons?.reduce((sum: number, l: any) => sum + (l.duration_minutes || 0), 0) || 0), 0) || 0} dk
+                    </div>
+                </div>
             </div>
 
             {/* Program Info Form */}
@@ -159,150 +205,169 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                         name="duration_weeks"
                         min="1"
                         defaultValue={program.duration_weeks || ""}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple/20 focus:border-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
                     />
                 </div>
 
-                <button
-                    type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:text-gray-900 rounded-lg hover:shadow-lg transition font-semibold flex items-center gap-2"
-                >
-                    <Save className="w-5 h-5" />
-                    Kaydet
-                </button>
-            </form>
-
-            {/* Add Module Form */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                    Yeni Modül Ekle
-                </h2>
-                <form action={addModule} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Modül Adı *
-                            </label>
-                            <input
-                                type="text"
-                                name="module_title"
-                                required
-                                placeholder="Örn: Python Temelleri"
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Açıklama
-                            </label>
-                            <input
-                                type="text"
-                                name="module_description"
-                                placeholder="Modül açıklaması..."
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                            />
-                        </div>
-                    </div>
-
+                <div className="flex justify-end pt-2">
                     <button
                         type="submit"
-                        className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:shadow-lg transition font-semibold flex items-center gap-2"
+                        className="flex items-center gap-2 px-6 py-3 bg-kodrix-purple dark:bg-amber-500 text-white dark:text-gray-900 rounded-xl hover:opacity-90 transition font-semibold shadow-md shadow-kodrix-purple/20"
                     >
-                        <Plus className="w-5 h-5" />
-                        Modül Ekle
+                        <Save className="w-4 h-4" />
+                        Kaydet
                     </button>
+                </div>
+            </form>
+
+            <hr className="border-gray-200 dark:border-gray-800" />
+
+            {/* Modules Section */}
+            <div>
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+                        <span className="bg-purple-100 dark:bg-amber-900/20 text-kodrix-purple dark:text-amber-500 p-2 rounded-lg">
+                            <BookOpen className="w-6 h-6" />
+                        </span>
+                        Modüller ve Dersler
+                    </h2>
+                </div>
+
+                {/* Add Module Form */}
+                <form action={addModule} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8 shadow-sm">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                        <Plus className="w-5 h-5 text-kodrix-purple dark:text-amber-500" />
+                        Yeni Modül Ekle
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <input
+                            type="text"
+                            name="module_title"
+                            required
+                            placeholder="Modül Başlığı"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple/20 focus:border-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
+                        />
+                        <input
+                            type="text"
+                            name="module_description"
+                            placeholder="Modül Açıklaması (İsteğe bağlı)"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple/20 focus:border-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
+                        />
+                    </div>
+                    <div className="flex justify-end">
+                        <button
+                            type="submit"
+                            className="flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl hover:opacity-90 transition font-semibold"
+                        >
+                            <Plus className="w-4 h-4" />
+                            Modül Ekle
+                        </button>
+                    </div>
                 </form>
-            </div>
 
-            {/* Modules List */}
-            <div className="space-y-4">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    Modüller ve Dersler
-                </h2>
-
-                {modules && modules.length > 0 ? (
-                    modules.map((module: any, moduleIndex) => (
+                {/* Modules List */}
+                <div className="space-y-6">
+                    {modules?.map((module: any) => (
                         <div
                             key={module.id}
-                            className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6"
+                            className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
                         >
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-kodrix-purple/10 dark:bg-amber-500/10 text-kodrix-purple dark:text-amber-500 font-bold">
-                                        {moduleIndex + 1}
+                            {/* Module Header */}
+                            <div className="bg-gray-50/50 dark:bg-gray-800/50 p-6 border-b border-gray-100 dark:border-gray-800 flex items-start justify-between">
+                                <div className="flex gap-4">
+                                    <div className="mt-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600">
+                                        <GripVertical className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
                                             {module.title}
+                                            <span className="text-xs font-normal text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-1 rounded-full">
+                                                {module.lessons?.length || 0} Ders
+                                            </span>
                                         </h3>
                                         {module.description && (
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm">
                                                 {module.description}
                                             </p>
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="flex gap-2">
+                                <div className="flex items-center gap-2">
+                                    {/* Actions */}
                                     <Link
-                                        href={`/admin/programs/${id}/modules/${module.id}`}
-                                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm font-semibold flex items-center gap-2"
+                                        href={`/admin/programs/${id}/modules/${module.id}/edit`}
+                                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition text-gray-500 hover:text-kodrix-purple dark:text-gray-400 dark:hover:text-amber-500"
+                                        title="Düzenle"
                                     >
-                                        <BookOpen className="w-4 h-4" />
-                                        Dersler
+                                        <Edit className="w-5 h-5" />
                                     </Link>
 
-                                    <form action={deleteModule}>
-                                        <input type="hidden" name="module_id" value={module.id} />
-                                        <button
-                                            type="submit"
-                                            className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 rounded-lg transition"
-                                            title="Sil"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </form>
+                                    <DeleteModuleButton
+                                        moduleId={module.id}
+                                        moduleTitle={module.title}
+                                        deleteAction={deleteModule}
+                                    />
+                                </div>
+                            </div>      {/* Lessons List in Module */}
+                            <div className="p-4 bg-white dark:bg-gray-900">
+                                {module.lessons && module.lessons.length > 0 ? (
+                                    <div className="space-y-2">
+                                        {module.lessons
+                                            .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+                                            .map((lesson: any) => (
+                                                <div
+                                                    key={lesson.id}
+                                                    className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent hover:border-gray-100 dark:hover:border-gray-700 transition group"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs font-bold">
+                                                            {lesson.lesson_number}
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-kodrix-purple dark:group-hover:text-amber-500 transition-colors">
+                                                                {lesson.title}
+                                                            </div>
+                                                            <div className="text-xs text-gray-500 flex items-center gap-2">
+                                                                <span>{lesson.duration_minutes} dk</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Link
+                                                            href={`/admin/lessons/${lesson.id}/edit`}
+                                                            className="p-2 text-gray-400 hover:text-kodrix-purple dark:hover:text-amber-500 hover:bg-purple-50 dark:hover:bg-amber-900/20 rounded-lg transition"
+                                                            title="Düzenle"
+                                                        >
+                                                            <Edit className="w-4 h-4" />
+                                                        </Link>
+                                                        <DeleteLessonButton
+                                                            lessonId={lesson.id}
+                                                            programId={id}
+                                                            lessonTitle={lesson.title}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-6 text-gray-500 dark:text-gray-400 text-sm bg-gray-50/50 dark:bg-gray-800/20 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
+                                        Bu modülde henüz ders yok
+                                    </div>
+                                )}
+
+                                <div className="mt-4 pt-4 border-t border-gray-50 dark:border-gray-800 flex justify-center">
+                                    <Link
+                                        href={`/admin/lessons/new?moduleId=${module.id}&programId=${id}`}
+                                        className="text-sm font-medium text-kodrix-purple dark:text-amber-500 hover:underline flex items-center gap-1"
+                                    >
+                                        <Plus className="w-4 h-4" /> Ders Ekle
+                                    </Link>
                                 </div>
                             </div>
-
-                            {/* Lessons List */}
-                            {module.lessons && module.lessons.length > 0 ? (
-                                <div className="mt-4 space-y-2 pl-11">
-                                    {module.lessons.map((lesson: any, lessonIndex: number) => (
-                                        <div
-                                            key={lesson.id}
-                                            className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                                        >
-                                            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
-                                                {lessonIndex + 1}.
-                                            </span>
-                                            <span className="text-sm text-gray-900 dark:text-gray-100">
-                                                {lesson.title}
-                                            </span>
-                                            {lesson.duration_minutes && (
-                                                <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">
-                                                    {lesson.duration_minutes} dk
-                                                </span>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="text-sm text-gray-500 dark:text-gray-400 pl-11 mt-2">
-                                    Bu modülde henüz ders yok
-                                </p>
-                            )}
                         </div>
-                    ))
-                ) : (
-                    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-12 text-center">
-                        <BookOpen className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                        <p className="text-gray-600 dark:text-gray-400">
-                            Henüz modül eklenmemiş
-                        </p>
-                    </div>
-                )}
+                    ))}
+                </div>
             </div>
         </div>
     );

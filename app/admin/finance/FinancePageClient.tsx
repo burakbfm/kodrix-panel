@@ -188,7 +188,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                 <div className="flex gap-3">
                     <button
                         onClick={() => setIsExpenseModalOpen(true)}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition shadow-md"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium transition shadow-md hover:scale-105 hover:shadow-red-500/20"
                     >
                         <TrendingDown className="w-5 h-5" />
                         Gider Ekle
@@ -202,106 +202,126 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
 
             {/* Dashboard Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-kodrix-purple dark:border-amber-500 shadow-sm">
-                    <div className="flex items-center justify-between mb-2">
-                        <Users className="w-5 h-5 text-blue-500" />
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Öğrenciler</span>
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group hover:border-kodrix-purple/30 dark:hover:border-amber-500/30">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Users className="w-6 h-6" />
+                        </div>
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">Öğrenciler</span>
                     </div>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalStudents}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{studentsWithAgreements} Anlaşmalı</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{totalStudents}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{studentsWithAgreements} Anlaşmalı</p>
                 </div>
-                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-kodrix-purple dark:border-amber-500 shadow-sm border-l-4 border-l-green-500">
-                    <div className="flex items-center justify-between mb-2">
-                        <TrendingUp className="w-5 h-5 text-green-500" />
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Beklenen</span>
+
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group hover:border-kodrix-purple/30 dark:hover:border-amber-500/30">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <TrendingUp className="w-6 h-6" />
+                        </div>
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">Beklenen</span>
                     </div>
-                    <p className="text-lg font-bold text-gray-900 dark:text-white truncate" title={`${totalAgreed} ₺`}>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white truncate" title={`${totalAgreed} ₺`}>
                         {totalAgreed.toLocaleString('tr-TR')} ₺
                     </p>
                 </div>
-                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-kodrix-purple dark:border-amber-500 shadow-sm border-l-4 border-l-blue-500">
-                    <div className="flex items-center justify-between mb-2">
-                        <CheckCircle className="w-5 h-5 text-blue-500" />
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Tahsilat</span>
+
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group hover:border-kodrix-purple/30 dark:hover:border-amber-500/30">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <CheckCircle className="w-6 h-6" />
+                        </div>
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400">Tahsilat</span>
                     </div>
-                    <p className="text-lg font-bold text-gray-900 dark:text-white truncate" title={`${totalPaid} ₺`}>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white truncate" title={`${totalPaid} ₺`}>
                         {totalPaid.toLocaleString('tr-TR')} ₺
                     </p>
                 </div>
-                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-kodrix-purple dark:border-amber-500 shadow-sm border-l-4 border-l-red-500">
-                    <div className="flex items-center justify-between mb-2">
-                        <TrendingDown className="w-5 h-5 text-red-500" />
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Giderler</span>
+
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group hover:border-kodrix-purple/30 dark:hover:border-amber-500/30">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <TrendingDown className="w-6 h-6" />
+                        </div>
+                        <span className="text-xs font-medium px-2 py-1 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">Giderler</span>
                     </div>
-                    <p className="text-lg font-bold text-gray-900 dark:text-white truncate" title={`${totalExpenses} ₺`}>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white truncate" title={`${totalExpenses} ₺`}>
                         {totalExpenses.toLocaleString('tr-TR')} ₺
                     </p>
                 </div>
-                <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-kodrix-purple dark:border-amber-500 shadow-sm border-l-4 border-l-kodrix-purple dark:border-l-amber-500">
-                    <div className="flex items-center justify-between mb-2">
-                        <DollarSign className="w-5 h-5 text-kodrix-purple dark:text-amber-500" />
-                        <span className="text-xs text-gray-500 dark:text-gray-400">Net Kasa</span>
+
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group hover:border-kodrix-purple/30 dark:hover:border-amber-500/30">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform ${netBalance >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400'}`}>
+                            <DollarSign className="w-6 h-6" />
+                        </div>
+                        <span className={`text-xs font-medium px-2 py-1 rounded-full ${netBalance >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400'}`}>Net Kasa</span>
                     </div>
-                    <p className={`text-lg font-bold truncate ${netBalance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    <p className={`text-2xl font-bold truncate ${netBalance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                         {netBalance.toLocaleString('tr-TR')} ₺
                     </p>
                 </div>
             </div>
 
             {/* Analytics Chart */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl border border-kodrix-purple dark:border-amber-500 p-6 shadow-sm h-96">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                    <LayoutDashboard className="w-5 h-5 text-gray-500" />
+                    <LayoutDashboard className="w-5 h-5 text-purple-600 dark:text-amber-500" />
                     Aylık Finansal Durum
                 </h3>
-                <ResponsiveContainer width="100%" height="85%">
-                    <BarChart data={monthlyStats} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.3} />
-                        <XAxis dataKey="month" stroke="#9CA3AF" fontSize={12} tickMargin={10} />
-                        <YAxis stroke="#9CA3AF" fontSize={12} />
-                        <Tooltip
-                            contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151', color: '#F3F4F6' }}
-                            itemStyle={{ color: '#F3F4F6' }}
-                        />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                        <Bar dataKey="income" name="Gelir" fill="#10B981" radius={[4, 4, 0, 0]} />
-                        <Bar dataKey="expense" name="Gider" fill="#EF4444" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
+                <div className="h-80 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={monthlyStats} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} vertical={false} />
+                            <XAxis dataKey="month" stroke="#9CA3AF" fontSize={12} tickMargin={10} axisLine={false} tickLine={false} />
+                            <YAxis stroke="#9CA3AF" fontSize={12} axisLine={false} tickLine={false} tickFormatter={(value) => `${value / 1000}k`} />
+                            <Tooltip
+                                contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151', color: '#F3F4F6', borderRadius: '12px' }}
+                                itemStyle={{ color: '#F3F4F6' }}
+                                cursor={{ fill: 'rgba(107, 114, 128, 0.1)' }}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+                            <Bar dataKey="income" name="Gelir" fill="#10B981" radius={[4, 4, 4, 4]} barSize={20} />
+                            <Bar dataKey="expense" name="Gider" fill="#EF4444" radius={[4, 4, 4, 4]} barSize={20} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
             {/* Content Tabs */}
             <div className="flex gap-4 border-b border-gray-200 dark:border-gray-800">
                 <button
                     onClick={() => handleTabChange('students')}
-                    className={`pb-3 px-1 font-medium text-sm transition ${activeTab === 'students' ? 'text-kodrix-purple dark:text-amber-500 border-b-2 border-kodrix-purple dark:border-amber-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                    className={`pb-3 px-4 font-medium text-sm transition relative ${activeTab === 'students' ? 'text-purple-600 dark:text-amber-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                 >
                     Öğrenci Ödemeleri
+                    {activeTab === 'students' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600 dark:bg-amber-500 rounded-t-full" />}
                 </button>
                 <button
                     onClick={() => handleTabChange('teachers')}
-                    className={`pb-3 px-1 font-medium text-sm transition ${activeTab === 'teachers' ? 'text-kodrix-purple dark:text-amber-500 border-b-2 border-kodrix-purple dark:border-amber-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                    className={`pb-3 px-4 font-medium text-sm transition relative ${activeTab === 'teachers' ? 'text-purple-600 dark:text-amber-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                 >
                     Öğretmen Ödemeleri
+                    {activeTab === 'teachers' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600 dark:bg-amber-500 rounded-t-full" />}
                 </button>
                 <button
                     onClick={() => handleTabChange('expenses')}
-                    className={`pb-3 px-1 font-medium text-sm transition ${activeTab === 'expenses' ? 'text-kodrix-purple dark:text-amber-500 border-b-2 border-kodrix-purple dark:border-amber-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                    className={`pb-3 px-4 font-medium text-sm transition relative ${activeTab === 'expenses' ? 'text-purple-600 dark:text-amber-500' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                 >
                     Gider Listesi
+                    {activeTab === 'expenses' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600 dark:bg-amber-500 rounded-t-full" />}
                 </button>
             </div>
 
             {/* Tab Content */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl border border-kodrix-purple dark:border-amber-500 overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-sm">
 
-                <div className="p-4 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+                <div className="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-900/50">
                     <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        {activeTab === 'students' && <Users className="w-5 h-5 text-kodrix-purple dark:text-amber-500" />}
-                        {activeTab === 'teachers' && <GraduationCap className="w-5 h-5 text-kodrix-purple dark:text-amber-500" />}
+                        {activeTab === 'students' && <Users className="w-5 h-5 text-purple-600 dark:text-amber-500" />}
+                        {activeTab === 'teachers' && <GraduationCap className="w-5 h-5 text-purple-600 dark:text-amber-500" />}
                         {activeTab === 'expenses' && <TrendingDown className="w-5 h-5 text-red-500" />}
                         {activeTab === 'students' ? 'Öğrenci Listesi' : activeTab === 'teachers' ? 'Öğretmen Listesi' : 'Tüm Giderler'}
-                        <span className="ml-2 text-xs font-normal text-gray-500">({totalItems} kayıt)</span>
+                        <span className="ml-2 text-xs font-normal text-gray-500 bg-white dark:bg-gray-800 px-2 py-0.5 rounded-full border border-gray-200 dark:border-gray-700">{totalItems} kayıt</span>
                     </h2>
 
                     <div className="relative w-64">
@@ -314,27 +334,27 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                 setSearchTerm(e.target.value);
                                 setCurrentPage(1); // Reset page on search
                             }}
-                            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple focus:border-transparent"
+                            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all outline-none"
                         />
                     </div>
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left border-collapse">
                         {activeTab === 'students' && (
                             <>
-                                <thead className="bg-gray-50 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400 text-xs uppercase">
+                                <thead className="bg-gray-50/50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase font-medium border-b border-gray-100 dark:border-gray-800">
                                     <tr>
-                                        <th className="p-4">Öğrenci</th>
-                                        <th className="p-4 text-center">Anlaşma Sayısı</th>
-                                        <th className="p-4 text-right">Toplam Anlaşma</th>
-                                        <th className="p-4 text-right">Toplam Ödenen</th>
-                                        <th className="p-4 text-right">Kalan</th>
-                                        <th className="p-4">Durum</th>
-                                        <th className="p-4 text-right">İşlem</th>
+                                        <th className="p-5 pl-6">Öğrenci</th>
+                                        <th className="p-5 text-center">Anlaşma Sayısı</th>
+                                        <th className="p-5 text-right">Toplam Anlaşma</th>
+                                        <th className="p-5 text-right">Toplam Ödenen</th>
+                                        <th className="p-5 text-right">Kalan</th>
+                                        <th className="p-5">Durum</th>
+                                        <th className="p-5 pr-6 text-right">İşlem</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                     {(paginatedData as typeof students).map((student) => {
                                         const stats = studentPaymentStats.get(student.id) || { agreed: 0, paid: 0, count: 0 };
                                         const remaining = stats.agreed - stats.paid;
@@ -343,68 +363,89 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                         let statusColor = "gray";
                                         let statusText = "Anlaşma Yok";
                                         if (stats.count > 0) {
-                                            if (remaining <= 0) { statusColor = "green"; statusText = "Tamamlandı"; }
+                                            if (remaining <= 0) { statusColor = "emerald"; statusText = "Tamamlandı"; }
                                             else if (stats.paid > 0) { statusColor = "blue"; statusText = "Devam Ediyor"; }
-                                            else { statusColor = "yellow"; statusText = "Ödeme Bekliyor"; }
+                                            else { statusColor = "amber"; statusText = "Ödeme Bekliyor"; }
                                         }
 
+                                        // Map tailwind colors correctly for dynamic classes (safelist needed or maintain explicit list)
+                                        // Simplified dynamic coloring:
+                                        const badgeClasses = {
+                                            emerald: "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800",
+                                            blue: "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-800",
+                                            amber: "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800",
+                                            gray: "bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-100 dark:border-gray-700"
+                                        };
+                                        const barColors = {
+                                            emerald: "bg-emerald-500",
+                                            blue: "bg-blue-500",
+                                            amber: "bg-amber-500",
+                                            gray: "bg-gray-300"
+                                        };
+
+                                        // @ts-ignore
+                                        const currentBadgeClass = badgeClasses[statusColor];
+                                        // @ts-ignore
+                                        const currentBarColor = barColors[statusColor];
+
+
                                         return (
-                                            <tr key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition">
-                                                <td className="p-4">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-full bg-kodrix-purple/10 text-kodrix-purple dark:text-amber-400 flex items-center justify-center font-bold text-sm">
+                                            <tr key={student.id} className="group hover:bg-white dark:hover:bg-gray-800/50 transition-all duration-200 hover:shadow-sm">
+                                                <td className="p-5 pl-6">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm shadow-sm">
                                                             {(student.full_name || student.email)?.charAt(0).toUpperCase()}
                                                         </div>
                                                         <div>
-                                                            <p className="font-medium text-gray-900 dark:text-white">{student.full_name || "İsimsiz"}</p>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400">{student.school_number || student.email}</p>
+                                                            <p className="font-semibold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-amber-400 transition-colors">{student.full_name || "İsimsiz"}</p>
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{student.school_number || student.email}</p>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="p-4 text-center">
+                                                <td className="p-5 text-center">
                                                     {stats.count > 0 ? (
-                                                        <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded text-xs font-medium border border-gray-200 dark:border-gray-700">
+                                                        <span className="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-md text-xs font-semibold border border-gray-100 dark:border-gray-700">
                                                             {stats.count} Adet
                                                         </span>
                                                     ) : (
-                                                        <span className="text-gray-400 text-xs">-</span>
+                                                        <span className="text-gray-300 dark:text-gray-600 text-xs">-</span>
                                                     )}
                                                 </td>
-                                                <td className="p-4 text-right font-semibold text-gray-900 dark:text-white">
+                                                <td className="p-5 text-right font-bold text-gray-900 dark:text-white">
                                                     {stats.agreed > 0 ? `${stats.agreed.toLocaleString('tr-TR')} ₺` : "-"}
                                                 </td>
-                                                <td className="p-4 text-right font-semibold text-green-600 dark:text-green-400">
+                                                <td className="p-5 text-right font-bold text-emerald-600 dark:text-emerald-400">
                                                     {stats.paid > 0 ? `${stats.paid.toLocaleString('tr-TR')} ₺` : "-"}
                                                 </td>
-                                                <td className="p-4 text-right font-semibold text-amber-600 dark:text-amber-400">
+                                                <td className="p-5 text-right font-bold text-amber-600 dark:text-amber-400">
                                                     {remaining > 0 ? `${remaining.toLocaleString('tr-TR')} ₺` : "-"}
                                                 </td>
-                                                <td className="p-4">
-                                                    <div className="flex flex-col gap-1">
+                                                <td className="p-5">
+                                                    <div className="flex flex-col gap-1.5 min-w-[120px]">
                                                         <div className="flex items-center gap-2">
-                                                            <span className={`text-xs px-2 py-0.5 rounded border border-${statusColor}-500/30 bg-${statusColor}-500/10 text-${statusColor}-600 dark:text-${statusColor}-400`}>
+                                                            <span className={`text-xs px-2.5 py-1 rounded-md border font-medium ${currentBadgeClass}`}>
                                                                 {statusText}
                                                             </span>
                                                         </div>
                                                         {stats.count > 0 && stats.agreed > 0 && (
-                                                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1 mt-1">
+                                                            <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 overflow-hidden">
                                                                 <div
-                                                                    className={`h-1.5 rounded-full bg-${statusColor}-500`}
+                                                                    className={`h-full rounded-full ${currentBarColor}`}
                                                                     style={{ width: `${Math.min(percentage, 100)}%` }}
                                                                 />
                                                             </div>
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="p-4 text-right">
-                                                    <Link href={`/admin/finance/${student.id}`} className="inline-flex items-center gap-1 text-kodrix-purple dark:text-amber-400 hover:opacity-80 text-sm font-medium transition">Detay <ArrowRight className="w-4 h-4" /></Link>
+                                                <td className="p-5 pr-6 text-right">
+                                                    <Link href={`/admin/finance/${student.id}`} className="inline-flex items-center gap-1.5 text-purple-600 dark:text-amber-400 hover:text-purple-700 dark:hover:text-amber-300 text-sm font-semibold transition bg-purple-50 dark:bg-amber-900/10 px-3 py-1.5 rounded-lg border border-purple-100 dark:border-amber-800/10 hover:shadow-sm">Detay <ArrowRight className="w-3.5 h-3.5" /></Link>
                                                 </td>
                                             </tr>
                                         );
                                     })}
                                     {filteredStudents.length === 0 && (
                                         <tr>
-                                            <td colSpan={7} className="p-8 text-center text-gray-500 dark:text-gray-400">
+                                            <td colSpan={7} className="p-12 text-center text-gray-500 dark:text-gray-400">
                                                 Kayıt bulunamadı.
                                             </td>
                                         </tr>
@@ -415,41 +456,41 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
 
                         {activeTab === 'teachers' && (
                             <>
-                                <thead className="bg-gray-50 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400 text-xs uppercase">
+                                <thead className="bg-gray-50/50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase font-medium border-b border-gray-100 dark:border-gray-800">
                                     <tr>
-                                        <th className="p-4">Öğretmen</th>
-                                        <th className="p-4">Branş</th>
-                                        <th className="p-4 text-right">Toplam Ödeme Yapılan</th>
-                                        <th className="p-4 text-right">İşlem</th>
+                                        <th className="p-5 pl-6">Öğretmen</th>
+                                        <th className="p-5">Branş</th>
+                                        <th className="p-5 text-right">Toplam Ödeme Yapılan</th>
+                                        <th className="p-5 pr-6 text-right">İşlem</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                     {(paginatedData as typeof teachers).map((teacher) => {
                                         const paid = teacherPaymentStats.get(teacher.id) || 0;
                                         return (
-                                            <tr key={teacher.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition">
-                                                <td className="p-4">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 flex items-center justify-center font-bold text-xs">
+                                            <tr key={teacher.id} className="group hover:bg-white dark:hover:bg-gray-800/50 transition-all duration-200 hover:shadow-sm">
+                                                <td className="p-5 pl-6">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 flex items-center justify-center font-bold text-xs shadow-sm">
                                                             {teacher.full_name?.[0] || 'T'}
                                                         </div>
                                                         <div>
-                                                            <div className="font-medium text-gray-900 dark:text-white">{teacher.full_name}</div>
-                                                            <div className="text-xs text-gray-500">{teacher.email}</div>
+                                                            <div className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{teacher.full_name}</div>
+                                                            <div className="text-xs text-gray-500 font-medium">{teacher.email}</div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="p-4 text-sm text-gray-600 dark:text-gray-400">{teacher.subject_field || "-"}</td>
-                                                <td className="p-4 text-right font-bold text-gray-900 dark:text-white">{paid > 0 ? `${paid.toLocaleString('tr-TR')} ₺` : "-"}</td>
-                                                <td className="p-4 text-right">
-                                                    <Link href={`/admin/finance/teacher/${teacher.id}`} className="text-kodrix-purple dark:text-amber-500 hover:opacity-80 text-sm font-medium">Detay</Link>
+                                                <td className="p-5 text-sm text-gray-600 dark:text-gray-400 font-medium">{teacher.subject_field || "-"}</td>
+                                                <td className="p-5 text-right font-bold text-gray-900 dark:text-white">{paid > 0 ? `${paid.toLocaleString('tr-TR')} ₺` : "-"}</td>
+                                                <td className="p-5 pr-6 text-right">
+                                                    <Link href={`/admin/finance/teacher/${teacher.id}`} className="text-purple-600 dark:text-amber-500 hover:text-purple-700 text-sm font-semibold bg-purple-50 dark:bg-amber-900/10 px-3 py-1.5 rounded-lg border border-purple-100 dark:border-amber-800/10">Detay</Link>
                                                 </td>
                                             </tr>
                                         );
                                     })}
                                     {filteredTeachers.length === 0 && (
                                         <tr>
-                                            <td colSpan={4} className="p-8 text-center text-gray-500 dark:text-gray-400">
+                                            <td colSpan={4} className="p-12 text-center text-gray-500 dark:text-gray-400">
                                                 Kayıt bulunamadı.
                                             </td>
                                         </tr>
@@ -460,41 +501,41 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
 
                         {activeTab === 'expenses' && (
                             <>
-                                <thead className="bg-gray-50 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400 text-xs uppercase">
+                                <thead className="bg-gray-50/50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase font-medium border-b border-gray-100 dark:border-gray-800">
                                     <tr>
-                                        <th className="p-4">Başlık / Açıklama</th>
-                                        <th className="p-4">Kategori</th>
-                                        <th className="p-4">İlgili Kişi</th>
-                                        <th className="p-4">Tarih</th>
-                                        <th className="p-4 text-right">Tutar</th>
-                                        <th className="p-4 text-right">İşlem</th>
+                                        <th className="p-5 pl-6">Başlık / Açıklama</th>
+                                        <th className="p-5">Kategori</th>
+                                        <th className="p-5">İlgili Kişi</th>
+                                        <th className="p-5">Tarih</th>
+                                        <th className="p-5 text-right">Tutar</th>
+                                        <th className="p-5 pr-6 text-right">İşlem</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                                <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                     {(paginatedData as typeof expenses).map((expense) => (
-                                        <tr key={expense.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition">
-                                            <td className="p-4">
-                                                <div className="font-medium text-gray-900 dark:text-white">{expense.title}</div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400">{expense.description}</div>
+                                        <tr key={expense.id} className="group hover:bg-white dark:hover:bg-gray-800/50 transition-all duration-200 hover:shadow-sm">
+                                            <td className="p-5 pl-6">
+                                                <div className="font-semibold text-gray-900 dark:text-white">{expense.title}</div>
+                                                <div className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-0.5">{expense.description}</div>
                                             </td>
-                                            <td className="p-4">
-                                                <span className={`px-2 py-1 rounded-full text-xs border ${expense.category === 'teacher_payment' ? 'bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800' : 'bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'}`}>
+                                            <td className="p-5">
+                                                <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${expense.category === 'teacher_payment' ? 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800' : 'bg-gray-50 text-gray-600 border-gray-100 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700'}`}>
                                                     {expense.category === 'teacher_payment' ? 'Öğretmen Ödemesi' : 'Diğer Gider'}
                                                 </span>
                                             </td>
-                                            <td className="p-4 text-sm text-gray-600 dark:text-gray-400">
+                                            <td className="p-5 text-sm text-gray-600 dark:text-gray-400 font-medium">
                                                 {expense.profiles?.full_name || "-"}
                                             </td>
-                                            <td className="p-4 text-sm text-gray-600 dark:text-gray-300">
+                                            <td className="p-5 text-sm text-gray-600 dark:text-gray-300 font-mono">
                                                 {new Date(expense.payment_date).toLocaleDateString("tr-TR")}
                                             </td>
-                                            <td className="p-4 text-right font-bold text-red-600 dark:text-red-400">
+                                            <td className="p-5 text-right font-bold text-red-600 dark:text-red-400">
                                                 - {expense.amount?.toLocaleString("tr-TR")} ₺
                                             </td>
-                                            <td className="p-4 text-right">
+                                            <td className="p-5 pr-6 text-right">
                                                 <form action={deleteExpense}>
                                                     <input type="hidden" name="expenseId" value={expense.id} />
-                                                    <button type="submit" className="text-gray-400 hover:text-red-500 transition">
+                                                    <button type="submit" className="text-gray-400 hover:text-red-500 transition p-2 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg">
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
                                                 </form>
@@ -503,7 +544,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                     ))}
                                     {filteredExpenses.length === 0 && (
                                         <tr>
-                                            <td colSpan={6} className="p-8 text-center text-gray-500 dark:text-gray-400">
+                                            <td colSpan={6} className="p-12 text-center text-gray-500 dark:text-gray-400">
                                                 Henüz gider kaydı yok.
                                             </td>
                                         </tr>

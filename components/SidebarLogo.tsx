@@ -13,7 +13,7 @@ export function SidebarLogo({ className }: { className?: string }) {
     setMounted(true);
   }, []);
 
-  const logoSrc = mounted && theme === "dark" ? "/logos/logo-dark.png" : "/logos/logo-light.png";
+  const logoSrc = mounted && theme === "dark" ? "/logos/logo-light.png" : "/logos/logo-dark.png";
 
   return (
     <div className={cn("relative flex items-center justify-center", className || "w-full h-12")}>

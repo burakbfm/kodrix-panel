@@ -46,16 +46,16 @@ export default async function LessonsPage() {
             </div>
 
             {/* Statistics Card */}
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-kodrix-purple dark:border-amber-500 shadow-sm">
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-purple-500/10 dark:bg-amber-500/10 flex items-center justify-center">
-                        <GraduationCap className="w-6 h-6 text-purple-500 dark:text-amber-500" />
+                    <div className="w-14 h-14 rounded-2xl bg-purple-50 dark:bg-amber-900/20 flex items-center justify-center">
+                        <GraduationCap className="w-7 h-7 text-kodrix-purple dark:text-amber-500" />
                     </div>
                     <div>
-                        <h3 className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                        <h3 className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                             Toplam Ders Taslağı
                         </h3>
-                        <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                        <p className="text-4xl font-bold text-gray-900 dark:text-gray-100 mt-1">
                             {lessonsCount || 0}
                         </p>
                     </div>

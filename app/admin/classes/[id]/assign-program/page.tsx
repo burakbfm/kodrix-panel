@@ -29,11 +29,11 @@ export default async function AssignProgramPage({ params }: PageProps) {
         .select("*")
         .order("created_at", { ascending: false });
 
-    // Get teachers
+    // Get teachers (admin + teacher roles)
     const { data: teachers } = await supabase
         .from("profiles")
         .select("*")
-        .eq("role", "teacher")
+        .in("role", ["admin", "teacher"])
         .order("full_name");
 
     async function assignProgram(formData: FormData) {
@@ -41,10 +41,18 @@ export default async function AssignProgramPage({ params }: PageProps) {
         const supabase = await createClient();
 
         const programId = formData.get("program_id") as string;
-        const teacherId = formData.get("teacher_id") as string || null;
-        const startDate = formData.get("start_date") as string || null;
+        const teacherId = formData.get("teacher_id") as string;
+        const startDate = formData.get("start_date") as string;
         const isActive = formData.get("is_active") === "true";
         const notes = formData.get("notes") as string || null;
+
+        // Validation
+        if (!teacherId) {
+            throw new Error("Öğretmen seçimi zorunludur!");
+        }
+        if (!startDate) {
+            throw new Error("Başlangıç tarihi zorunludur!");
+        }
 
         const { error } = await supabase.from("class_programs").insert([
             {
@@ -59,7 +67,7 @@ export default async function AssignProgramPage({ params }: PageProps) {
 
         if (error) {
             console.error("Program atama hatası:", error);
-            return;
+            throw new Error("Program atama sırasında bir hata oluştu!");
         }
 
         revalidatePath(`/admin/classes/${id}`);
@@ -115,20 +123,24 @@ export default async function AssignProgramPage({ params }: PageProps) {
                             htmlFor="teacher_id"
                             className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
                         >
-                            Öğretmen
+                            Öğretmen *
                         </label>
                         <select
                             id="teacher_id"
                             name="teacher_id"
+                            required
                             className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 focus:border-transparent transition outline-none"
                         >
-                            <option value="">Öğretmen seçin (isteğe bağlı)</option>
+                            <option value="">Öğretmen seçin</option>
                             {teachers?.map((teacher) => (
                                 <option key={teacher.id} value={teacher.id}>
                                     {teacher.full_name}
                                 </option>
                             ))}
                         </select>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Bu öğretmen derslerden sorumlu olacak
+                        </p>
                     </div>
 
                     {/* Start Date */}
@@ -137,14 +149,18 @@ export default async function AssignProgramPage({ params }: PageProps) {
                             htmlFor="start_date"
                             className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
                         >
-                            Başlangıç Tarihi
+                            Başlangıç Tarihi *
                         </label>
                         <input
                             type="date"
                             id="start_date"
                             name="start_date"
+                            required
                             className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 focus:border-transparent transition outline-none"
                         />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Dersler bu tarihten başlayarak planlanacak
+                        </p>
                     </div>
 
                     {/* Active Status */}
@@ -161,7 +177,7 @@ export default async function AssignProgramPage({ params }: PageProps) {
                             htmlFor="is_active"
                             className="text-sm font-semibold text-gray-700 dark:text-gray-300"
                         >
-                            Programı hemen aktif et
+                            Programı hemen aktif et ve dersleri kopyala
                         </label>
                     </div>
 
