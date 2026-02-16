@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Plus, BookOpen, Clock, Target, Edit } from "lucide-react";
+import { Plus, BookOpen, Clock, Target, Edit, BrainCircuit } from "lucide-react";
 import DeleteQuizButton from "./DeleteQuizButton";
 import QuizList from "./QuizList";
 
@@ -33,24 +33,28 @@ export default async function QuizzesPage() {
     );
 
     return (
-        <div className="p-8 max-w-7xl mx-auto space-y-8">
+        <div className="p-8 max-w-7xl mx-auto space-y-10">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                        Quiz Kütüphanesi
-                    </h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                        Quizleri oluşturun ve yönetin
-                    </p>
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-pink-900 to-rose-900 dark:from-pink-950 dark:to-rose-950 p-10 text-white shadow-2xl border border-white/10">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div>
+                        <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+                            <BrainCircuit className="w-10 h-10 text-pink-200" />
+                            Quiz Kütüphanesi
+                        </h1>
+                        <p className="text-pink-200 text-lg">
+                            Öğrencilerinizi test etmek için quizler oluşturun ve yönetin.
+                        </p>
+                    </div>
+                    <Link
+                        href="/admin/quizzes/new"
+                        className="px-8 py-4 bg-white text-pink-900 rounded-2xl hover:shadow-lg hover:shadow-white/20 hover:scale-[1.02] transition-all duration-200 font-bold flex items-center gap-2 whitespace-nowrap"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Yeni Quiz
+                    </Link>
                 </div>
-                <Link
-                    href="/admin/quizzes/new"
-                    className="px-6 py-3 bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:text-gray-900 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 font-semibold flex items-center gap-2"
-                >
-                    <Plus className="w-5 h-5" />
-                    Yeni Quiz
-                </Link>
             </div>
 
             <QuizList quizzes={quizzesWithCounts as any[]} />

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save, CheckCircle, XCircle } from "lucide-react";
 import { revalidatePath } from "next/cache";
+import SubmitAttendanceButton from "@/components/SubmitAttendanceButton";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -80,7 +81,12 @@ export default async function TakeAttendancePage({ params, searchParams }: PageP
             return;
         }
 
-        const { error } = await supabase.from("attendance").insert(attendanceRecords);
+        const { error } = await supabase
+            .from("attendance")
+            .upsert(attendanceRecords, {
+                onConflict: 'lesson_id, student_id',
+                ignoreDuplicates: false
+            });
 
         if (error) {
             console.error("Yoklama kaydetme hatası:", error);
@@ -252,13 +258,7 @@ export default async function TakeAttendancePage({ params, searchParams }: PageP
                         >
                             İptal
                         </Link>
-                        <button
-                            type="submit"
-                            className="px-6 py-3 bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:text-gray-900 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 font-semibold flex items-center gap-2"
-                        >
-                            <Save className="w-5 h-5" />
-                            Yoklamayı Kaydet
-                        </button>
+                        <SubmitAttendanceButton />
                     </div>
                 )}
             </form>

@@ -6,6 +6,7 @@ import { login } from "./actions";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Image from "next/image";
 import { AlertCircle } from "lucide-react";
+import SplineScene from "@/components/SplineScene";
 
 // Wrapper for Submit Button to handle pending state
 function SubmitButton() {
@@ -15,9 +16,14 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-lg shadow-purple-500/20 dark:shadow-amber-500/20 text-sm font-bold text-white bg-kodrix-purple hover:bg-purple-700 dark:bg-amber-500 dark:hover:bg-amber-600 dark:text-gray-900 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+      className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg shadow-kodrix-purple/30 dark:shadow-amber-500/20 text-sm font-bold text-white dark:text-gray-900 bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-400 dark:to-orange-500 hover:to-purple-500 dark:hover:to-orange-400 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-kodrix-purple dark:focus:ring-amber-500 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-wide"
     >
-      {pending ? "Giriş Yapılıyor..." : "Giriş Yap"}
+      {pending ? (
+        <span className="flex items-center gap-2">
+          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          Giriş Yapılıyor...
+        </span>
+      ) : "Giriş Yap"}
     </button>
   );
 }
@@ -30,158 +36,129 @@ export default function LoginPage() {
   const [state, formAction] = useActionState(login, initialState);
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-[#0a0a16] text-gray-900 dark:text-white selection:bg-kodrix-purple selection:text-white transition-colors duration-300 overflow-hidden">
+
+      {/* Background Elements */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-500/10 dark:bg-purple-900/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 dark:bg-blue-900/20 rounded-full blur-[120px] animate-pulse delay-1000"></div>
+      </div>
 
       {/* Left Side - Form Area */}
-      <div className="flex flex-col justify-center flex-1 px-8 py-12 lg:flex-none lg:w-1/2 xl:w-[500px] bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 relative">
+      <div className="relative z-10 flex flex-col justify-center flex-1 px-8 py-12 lg:flex-none lg:w-1/2 xl:w-[500px] border-r border-gray-200 dark:border-white/5 backdrop-blur-xl bg-white/60 dark:bg-black/40 transition-colors duration-300">
         <div className="w-full max-w-sm mx-auto">
 
-          <div className="mb-10 text-center lg:text-left">
-            <div className="inline-block p-6 mb-6 rounded-2xl bg-purple-50 dark:bg-amber-900/20 border border-purple-100 dark:border-amber-900/30">
-              {/* Login Page Main Logo */}
-              <div className="relative h-16 w-48">
-                <Image
-                  src="/logos/logo-dark-main.png"
-                  alt="KodriX Logo"
-                  fill
-                  className="object-contain dark:hidden"
-                  priority
-                  unoptimized
-                />
-                <Image
-                  src="/logos/logo-light-main.png"
-                  alt="KodriX Logo"
-                  fill
-                  className="object-contain hidden dark:block"
-                  priority
-                  unoptimized
-                />
-              </div>
+          <div className="mb-12">
+            <div className="inline-flex items-center gap-3 mb-8">
+              {/* Left Logo REMOVED as requested, only text remains */}
+              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-400 dark:to-yellow-300">
+                KodriX LMS
+              </span>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">Hoş Geldiniz</h1>
-            <p className="mt-3 text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
-              Öğretmen veya Öğrenci girişi için bilgilerinizi giriniz.
+
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white mb-3">Tekrar Hoş Geldiniz</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
+              Eğitim yolculuğunuza devam etmek için giriş yapın.
             </p>
           </div>
 
           <form action={formAction} className="space-y-6">
-            <div>
-              <label htmlFor="schoolNumber" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <div className="space-y-2">
+              <label htmlFor="schoolNumber" className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">
                 Kullanıcı Adı / Okul No
               </label>
-              <input
-                id="schoolNumber"
-                name="schoolNumber"
-                type="text"
-                required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 focus:border-transparent transition outline-none placeholder-gray-400 dark:placeholder-gray-500"
-                placeholder="Örn: 202401 veya t.yilmaz"
-              />
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-kodrix-purple to-amber-500 rounded-xl blur opacity-0 group-focus-within:opacity-20 transition-opacity duration-300"></div>
+                <input
+                  id="schoolNumber"
+                  name="schoolNumber"
+                  type="text"
+                  required
+                  className="relative w-full px-4 py-3.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:bg-white dark:focus:bg-black/40 focus:border-kodrix-purple dark:focus:border-white/20 focus:ring-0 transition-all outline-none placeholder-gray-400 dark:placeholder-gray-600 shadow-sm dark:shadow-none"
+                  placeholder="Örn: 202401"
+                />
+              </div>
             </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between ml-1">
+                <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Şifre
                 </label>
+                <a href="#" className="text-xs text-kodrix-purple dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 transition-colors">Şifremi Unuttum?</a>
               </div>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple dark:focus:ring-amber-500 focus:border-transparent transition outline-none placeholder-gray-400 dark:placeholder-gray-500"
-                placeholder="••••••••"
-              />
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-kodrix-purple to-amber-500 rounded-xl blur opacity-0 group-focus-within:opacity-20 transition-opacity duration-300"></div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  className="relative w-full px-4 py-3.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:bg-white dark:focus:bg-black/40 focus:border-kodrix-purple dark:focus:border-white/20 focus:ring-0 transition-all outline-none placeholder-gray-400 dark:placeholder-gray-600 shadow-sm dark:shadow-none"
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
 
             {state?.error && (
-              <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
-                <AlertCircle className="w-4 h-4" />
+              <div className="p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-200 text-sm flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+                <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-500 dark:text-red-400" />
                 {state.error}
               </div>
             )}
 
-            <div className="pt-2">
+            <div className="pt-4">
               <SubmitButton />
             </div>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800">
-            <div className="flex flex-col items-center gap-4">
-              <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-                Giriş yapamıyor musun? <br />
-                <span className="text-kodrix-purple dark:text-amber-500 font-medium cursor-help">Yöneticinizle iletişime geçin</span>
-              </p>
-
-              {/* Theme Toggle */}
-              <div className="flex items-center gap-2 p-2 rounded-full bg-gray-100 dark:bg-gray-800/50">
-                <ThemeToggle />
-              </div>
+          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/5 flex items-center justify-between">
+            <p className="text-sm text-gray-500 dark:text-gray-500">
+              Giriş sorunu mu yaşıyorsunuz? <br />
+              <button className="text-gray-700 dark:text-gray-300 hover:text-kodrix-purple dark:hover:text-white transition-colors underline decoration-gray-300 dark:decoration-white/20 hover:decoration-kodrix-purple dark:hover:decoration-white/50 underline-offset-4">
+                Yönetici ile iletişime geçin
+              </button>
+            </p>
+            {/* Theme Toggle */}
+            <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+              <ThemeToggle />
             </div>
           </div>
 
         </div>
       </div>
 
-      {/* Right Side - Image/Brand Area */}
-      <div className="hidden lg:flex flex-1 relative bg-gradient-to-br from-kodrix-purple to-purple-900 dark:from-gray-900 dark:to-black overflow-hidden items-center justify-center group">
-        {/* Animated Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-pink-500/20 to-amber-500/20 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-amber-900/20 animate-gradient-xy"></div>
+      {/* Right Side - 3D Scene */}
+      <div className="hidden lg:flex flex-1 relative bg-gray-100 dark:bg-black transition-colors duration-500 items-center justify-center overflow-hidden">
 
-        {/* Decorative Grid */}
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20 dark:opacity-10 bg-center transition-opacity duration-500 group-hover:opacity-30"></div>
+        {/* Dynamic Glow Effect Behind Robot */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[100px] transition-colors duration-700
+          bg-purple-600/30 dark:bg-amber-500/20"></div>
 
-        {/* Floating Particles */}
-        <div className="absolute top-10 left-10 w-2 h-2 bg-white/40 rounded-full animate-float"></div>
-        <div className="absolute top-32 right-24 w-1.5 h-1.5 bg-amber-300/50 rounded-full animate-float animation-delay-1000"></div>
-        <div className="absolute bottom-24 left-32 w-2.5 h-2.5 bg-purple-300/40 rounded-full animate-float animation-delay-2000"></div>
-        <div className="absolute top-1/2 right-16 w-1 h-1 bg-white/60 rounded-full animate-float animation-delay-3000"></div>
-        <div className="absolute bottom-40 right-40 w-1.5 h-1.5 bg-pink-300/50 rounded-full animate-float animation-delay-500"></div>
+        <div className="absolute inset-0 z-0">
+          <SplineScene scene="/scene.splinecode" className="scale-110" />
+        </div>
 
-        {/* Floating shapes with hover effect */}
-        <div className="absolute top-20 right-20 w-64 h-64 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob transition-all duration-1000 group-hover:scale-110"></div>
-        <div className="absolute bottom-20 left-20 w-64 h-64 bg-amber-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000 transition-all duration-1000 group-hover:scale-110"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
-
-        <div className="relative z-10 flex flex-col items-center transition-transform duration-500 group-hover:scale-105">
-          {/* Large Logo with Interactive Spin Animation */}
-          <div className="relative w-64 h-64 mb-8 cursor-pointer transition-transform duration-500 hover:scale-110">
-            {/* Spinning Rings with hover speed change */}
-            <div className="absolute inset-0 border-4 border-dashed border-white/20 rounded-full animate-[spin_10s_linear_infinite] hover:animate-[spin_5s_linear_infinite] transition-all"></div>
-            <div className="absolute inset-4 border-4 border-dashed border-amber-400/30 rounded-full animate-[spin_15s_linear_infinite_reverse] hover:animate-[spin_7s_linear_infinite_reverse] transition-all"></div>
-            <div className="absolute inset-8 border-2 border-dotted border-purple-300/20 rounded-full animate-[spin_20s_linear_infinite]"></div>
-
-            {/* Pulsing Glow Effect */}
-            <div className="absolute inset-12 bg-gradient-to-r from-purple-500/20 to-amber-500/20 rounded-full blur-xl animate-pulse"></div>
-
-            {/* Logo Image with hover effect */}
-            <div className="absolute inset-8 flex items-center justify-center bg-white/5 backdrop-blur-xl rounded-full shadow-2xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-purple-500/50 hover:shadow-3xl">
+        {/* Overlay Content - Logo Frame in front */}
+        <div className="absolute bottom-16 left-0 right-0 z-10 flex flex-col items-center pointer-events-none">
+          <div className="relative flex flex-col items-center gap-4 backdrop-blur-md bg-white/10 dark:bg-black/40 p-8 rounded-3xl border border-white/20 dark:border-white/10 shadow-2xl transition-all duration-300">
+            <div className="relative w-40 h-12 drop-shadow-xl">
               <Image
-                src="/logos/logo-light-main.png"
-                alt="KodriX Large Logo"
-                width={120}
-                height={120}
-                className="object-contain drop-shadow-2xl transition-transform duration-300 hover:scale-110 dark:hidden"
-                priority
+                src="/logos/logo-dark-main.png"
+                alt="KodriX"
+                fill
+                className="object-contain dark:hidden"
               />
               <Image
                 src="/logos/logo-light-main.png"
-                alt="KodriX Large Logo"
-                width={120}
-                height={120}
-                className="object-contain drop-shadow-2xl transition-transform duration-300 hover:scale-110 hidden dark:block"
-                priority
+                alt="KodriX"
+                fill
+                className="object-contain hidden dark:block"
               />
             </div>
-          </div>
-
-          <div className="text-center space-y-4 max-w-lg px-6">
-            <h2 className="text-5xl font-bold tracking-tight text-white drop-shadow-lg animate-fade-in-up hover:tracking-wide transition-all duration-300 cursor-default">KODRIX LMS</h2>
-            <div className="h-1.5 w-24 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto rounded-full animate-pulse hover:w-32 transition-all duration-300"></div>
-            <p className="text-xl text-purple-100 dark:text-gray-400 font-light leading-relaxed animate-fade-in-up animation-delay-200">
-              Geleceğin eğitim teknolojisi.<br />
-              <span className="text-amber-300 font-medium hover:text-amber-200 transition-colors cursor-pointer">Öğrenci</span> • <span className="text-amber-300 font-medium hover:text-amber-200 transition-colors cursor-pointer">Öğretmen</span> • <span className="text-amber-300 font-medium hover:text-amber-200 transition-colors cursor-pointer">Yönetim</span>
+            <div className="h-0.5 w-16 bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-400 dark:to-orange-500 rounded-full"></div>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 tracking-wide">
+              Geleceğin Eğitim Teknolojisi
             </p>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { BookOpen, Plus, Edit, Trash2, Layers } from "lucide-react";
+import { BookOpen, Plus, Edit, Trash2, Layers, BookMarked } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import ProgramCard from "./ProgramCard";
 
@@ -77,24 +77,28 @@ export default async function ProgramsPage() {
     );
 
     return (
-        <div className="p-8 max-w-7xl mx-auto space-y-8">
+        <div className="p-8 max-w-7xl mx-auto space-y-10">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                        Programlar
-                    </h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                        Eğitim programlarını ve ders şablonlarını yönetin
-                    </p>
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-teal-900 to-emerald-900 dark:from-teal-950 dark:to-emerald-950 p-10 text-white shadow-2xl border border-white/10">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div>
+                        <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+                            <BookMarked className="w-10 h-10 text-emerald-200" />
+                            Programlar
+                        </h1>
+                        <p className="text-emerald-200 text-lg">
+                            Eğitim programlarını ve ders şablonlarını yönetin.
+                        </p>
+                    </div>
+                    <Link
+                        href="/admin/programs/new"
+                        className="px-8 py-4 bg-white text-emerald-900 rounded-2xl hover:shadow-lg hover:shadow-white/20 hover:scale-[1.02] transition-all duration-200 font-bold flex items-center gap-2 whitespace-nowrap"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Yeni Program
+                    </Link>
                 </div>
-                <Link
-                    href="/admin/programs/new"
-                    className="px-6 py-3 bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:text-gray-900 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 font-semibold flex items-center gap-2"
-                >
-                    <Plus className="w-5 h-5" />
-                    Yeni Program
-                </Link>
             </div>
 
             {/* Programs Grid */}
@@ -109,17 +113,17 @@ export default async function ProgramsPage() {
                     ))}
                 </div>
             ) : (
-                <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-12 text-center">
-                    <BookOpen className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                        Henüz program eklenmemiş
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-6">
-                        İlk eğitim programınızı oluşturarak başlayın
+                <div className="col-span-full text-center py-16 border-2 border-dashed border-gray-200 dark:border-white/10 rounded-3xl bg-gray-50/50 dark:bg-white/5">
+                    <div className="w-20 h-20 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <BookOpen className="w-10 h-10 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Henüz program eklenmemiş</h3>
+                    <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-8">
+                        İlk eğitim programınızı oluşturarak müfredatınızı hazırlamaya başlayın.
                     </p>
                     <Link
                         href="/admin/programs/new"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:text-gray-900 rounded-lg hover:shadow-lg transition-all font-semibold"
+                        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-kodrix-purple to-purple-800 dark:from-amber-500 dark:to-orange-600 text-white dark:text-gray-900 rounded-2xl hover:shadow-lg transition-all font-bold"
                     >
                         <Plus className="w-5 h-5" />
                         Program Oluştur

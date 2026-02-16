@@ -28,7 +28,7 @@ export default async function StudentLayout({
         <div className="flex h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
 
             {/* UNIFIED SIDEBAR */}
-            <Sidebar role="student" />
+            <Sidebar role="student" userName={profile?.full_name} userEmail={profile?.email} />
 
             {/* MAIN CONTENT AREA */}
             < div className="flex-1 flex flex-col overflow-hidden ml-64" >

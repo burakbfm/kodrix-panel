@@ -6,6 +6,7 @@ import { ArrowLeft, Plus, Edit, Trash2, BookOpen, Save, GripVertical } from "luc
 import { revalidatePath } from "next/cache";
 import DeleteModuleButton from "./DeleteModuleButton";
 import DeleteLessonButton from "@/components/DeleteLessonButton";
+import AddModuleForm from "./AddModuleForm";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -59,30 +60,7 @@ export default async function ProgramDetailPage({ params }: PageProps) {
         revalidatePath(`/admin/programs/${id}`);
     }
 
-    async function addModule(formData: FormData) {
-        "use server";
-        const supabase = await createClient();
 
-        const maxOrder = modules && modules.length > 0
-            ? Math.max(...modules.map(m => m.order || 0))
-            : 0;
-
-        const moduleData = {
-            program_id: id,
-            title: formData.get("module_title") as string,
-            description: formData.get("module_description") as string,
-            order: maxOrder + 1,
-        };
-
-        const { error } = await supabase.from("modules").insert(moduleData);
-
-        if (error) {
-            console.error("Modül ekleme hatası:", error);
-            return;
-        }
-
-        revalidatePath(`/admin/programs/${id}`);
-    }
 
     async function deleteModule(formData: FormData) {
         "use server";
@@ -234,36 +212,8 @@ export default async function ProgramDetailPage({ params }: PageProps) {
                 </div>
 
                 {/* Add Module Form */}
-                <form action={addModule} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8 shadow-sm">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-                        <Plus className="w-5 h-5 text-kodrix-purple dark:text-amber-500" />
-                        Yeni Modül Ekle
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <input
-                            type="text"
-                            name="module_title"
-                            required
-                            placeholder="Modül Başlığı"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple/20 focus:border-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                        />
-                        <input
-                            type="text"
-                            name="module_description"
-                            placeholder="Modül Açıklaması (İsteğe bağlı)"
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-kodrix-purple/20 focus:border-kodrix-purple dark:focus:ring-amber-500 transition outline-none"
-                        />
-                    </div>
-                    <div className="flex justify-end">
-                        <button
-                            type="submit"
-                            className="flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl hover:opacity-90 transition font-semibold"
-                        >
-                            <Plus className="w-4 h-4" />
-                            Modül Ekle
-                        </button>
-                    </div>
-                </form>
+                {/* Add Module Form */}
+                <AddModuleForm programId={id} />
 
                 {/* Modules List */}
                 <div className="space-y-6">

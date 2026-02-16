@@ -4,9 +4,37 @@ import { createSystemUser } from "@/app/admin/actions";
 import Link from "next/link";
 import { ArrowLeft, Save, User, Briefcase } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function NewUserPage() {
   const [role, setRole] = useState<"student" | "teacher">("student");
+  const [saving, setSaving] = useState(false);
+  const router = useRouter();
+
+  async function handleSubmit(formData: FormData) {
+    setSaving(true);
+    // @ts-ignore
+    if (typeof window !== 'undefined' && window.NProgress) window.NProgress.start();
+
+    try {
+      await createSystemUser(formData);
+      toast.success("Kullanıcı başarıyla oluşturuldu");
+      // Server action redirects, but just in case we can force NProgress done if needed
+      // But if it redirects, the page unloads.
+    } catch (error: any) {
+      // Ignore redirect errors which are actually successful navigations
+      if (error.message === 'NEXT_REDIRECT' || error.message?.includes('NEXT_REDIRECT') || error.digest?.includes('NEXT_REDIRECT')) {
+        toast.success("Kullanıcı oluşturuldu, yönlendiriliyor...");
+        return;
+      }
+      console.error("User creation error:", error);
+      toast.error("Hata: " + (error.message || "Bilinmeyen hata"));
+      setSaving(false);
+      // @ts-ignore
+      if (typeof window !== 'undefined' && window.NProgress) window.NProgress.done();
+    }
+  }
 
   return (
     <div className="p-8 flex justify-center bg-gray-50 dark:bg-gray-950 min-h-screen transition-colors">
@@ -22,7 +50,7 @@ export default function NewUserPage() {
             Yeni Kullanıcı Kaydı
           </h1>
 
-          <form action={createSystemUser} className="space-y-6">
+          <form action={handleSubmit} className="space-y-6">
 
             {/* ROL SEÇİMİ */}
             <div>
@@ -33,8 +61,8 @@ export default function NewUserPage() {
                 <div
                   onClick={() => setRole("student")}
                   className={`cursor-pointer p-4 rounded-lg border flex items-center justify-center gap-2 transition ${role === 'student'
-                      ? 'bg-kodrix-purple dark:bg-amber-500 border-kodrix-purple dark:border-amber-500 text-white dark:text-gray-900 shadow-lg'
-                      : 'bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-kodrix-purple dark:bg-amber-500 border-kodrix-purple dark:border-amber-500 text-white dark:text-gray-900 shadow-lg'
+                    : 'bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                 >
                   <User className="w-5 h-5" />
@@ -43,8 +71,8 @@ export default function NewUserPage() {
                 <div
                   onClick={() => setRole("teacher")}
                   className={`cursor-pointer p-4 rounded-lg border flex items-center justify-center gap-2 transition ${role === 'teacher'
-                      ? 'bg-green-600 border-green-500 text-white shadow-lg'
-                      : 'bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-green-600 border-green-500 text-white shadow-lg'
+                    : 'bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                 >
                   <Briefcase className="w-5 h-5" />
@@ -153,9 +181,13 @@ export default function NewUserPage() {
               />
             </div>
 
-            <button className="w-full bg-kodrix-purple dark:bg-amber-500 hover:bg-kodrix-purple/90 dark:hover:bg-amber-600 text-white dark:text-gray-900 font-bold py-3 rounded-lg transition mt-4 flex items-center justify-center gap-2 shadow-sm">
+            <button
+              type="submit"
+              disabled={saving}
+              className="w-full bg-kodrix-purple dark:bg-amber-500 hover:bg-kodrix-purple/90 dark:hover:bg-amber-600 text-white dark:text-gray-900 font-bold py-3 rounded-lg transition mt-4 flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+            >
               <Save className="w-5 h-5" />
-              Kaydı Tamamla
+              {saving ? "Kaydediliyor..." : "Kaydı Tamamla"}
             </button>
           </form>
         </div>

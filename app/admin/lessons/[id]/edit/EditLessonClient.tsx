@@ -5,9 +5,11 @@ import Link from "next/link";
 import { ArrowLeft, Save, Info, GraduationCap, Lock, FileText, MonitorPlay } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import { updateProgramLesson } from "@/app/admin/lessons/actions";
+import { toast } from "sonner";
 import MarkdownEditor from "@/components/MarkdownEditor";
 
 interface EditLessonClientProps {
+    // ...
     lesson: {
         id: string;
         module_id: string;
@@ -19,8 +21,7 @@ interface EditLessonClientProps {
         teacher_content?: string | null; // Added field
         duration_minutes: number;
         order: number;
-        duration_minutes: number;
-        order: number;
+
         video_url: string | null;
         meeting_link: string | null;
         attachments: any; // JSONB
@@ -63,6 +64,13 @@ export default function EditLessonClient({ lesson, programId }: EditLessonClient
 
     async function handleSubmit(formData: FormData) {
         setSubmitting(true);
+        // @ts-ignore
+        if (typeof window !== 'undefined' && window.NProgress) window.NProgress.start();
+        try {
+            // @ts-ignore
+            const NProgress = (await import("nprogress")).default;
+            if (NProgress) NProgress.start();
+        } catch (e) { }
 
         // Merge attachments
         const allAttachments = [
@@ -82,14 +90,18 @@ export default function EditLessonClient({ lesson, programId }: EditLessonClient
 
         try {
             await updateProgramLesson(formData);
+            toast.success("Ders güncellemesi başarılı");
         } catch (error: any) {
             // Ignore redirect errors which are actually successful navigations
             if (error.message === 'NEXT_REDIRECT' || error.message?.includes('NEXT_REDIRECT') || error.digest?.includes('NEXT_REDIRECT')) {
+                toast.success("Ders güncellemesi başarılı (Yönlendiriliyor...)");
                 return;
             }
             console.error("Submit error:", error);
-            alert(`Bir hata oluştu: ${error.message || "Bilinmeyen hata"}`);
+            toast.error(`Bir hata oluştu: ${error.message || "Bilinmeyen hata"}`);
             setSubmitting(false);
+            // @ts-ignore
+            if (typeof window !== 'undefined' && window.NProgress) window.NProgress.done();
         }
     }
 

@@ -49,7 +49,7 @@ export function AddPaymentButton({ students, payments }: AddPaymentButtonProps) 
         <>
             <button
                 onClick={() => setShowStudentSelect(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-kodrix-purple hover:bg-kodrix-purple/90 text-white rounded-lg font-medium transition shadow-md"
+                className="flex items-center gap-2 px-6 py-3.5 bg-white text-orange-700 rounded-2xl hover:bg-orange-50 hover:scale-[1.02] transition-all duration-200 font-bold whitespace-nowrap shadow-lg"
             >
                 <Plus className="w-5 h-5" />
                 Ödeme Ekle
@@ -149,7 +149,7 @@ export function AddPaymentButton({ students, payments }: AddPaymentButtonProps) 
                                                                 // Let's use `handleStudentSelect` to also take a paymentId?
                                                                 handleStudentSelect(student.id, p.id);
                                                             }}
-                                                            className="w-full text-left p-2 rounded text-sm hover:bg-kodrix-purple/10 text-gray-700 dark:text-gray-300 flex justify-between items-center"
+                                                            className="w-full text-left p-2 rounded text-sm hover:bg-amber-500/10 text-gray-700 dark:text-gray-300 flex justify-between items-center"
                                                         >
                                                             <span>{p.notes || "Ödeme Anlaşması"}</span>
                                                             <span className="text-xs text-gray-500">

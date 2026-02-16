@@ -61,48 +61,76 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
+    <div className="flex flex-col min-h-screen">
 
-      {/* Top Navbar */}
-      <nav className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-4 flex justify-between items-center transition-colors">
-        <div className="text-xl font-bold text-kodrix-purple dark:text-amber-500">KodriX</div>
+      {/* Top Navbar - Glass Effect */}
+      <nav className="sticky top-0 z-40 w-full bg-white/70 dark:bg-black/40 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 px-6 py-4 flex justify-between items-center transition-all">
+        <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-400 dark:to-orange-500">
+          KodriX <span className="text-gray-600 dark:text-gray-400 font-medium">Dashboard</span>
+        </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            {user.email?.split("@")[0]}
-          </span>
-          <form action="/auth/signout" method="post">
-            <button className="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition">
-              Çıkış
-            </button>
-          </form>
+          <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-gray-100/50 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-kodrix-purple to-amber-500 p-[2px]">
+              <div className="w-full h-full rounded-full bg-white dark:bg-black flex items-center justify-center text-xs font-bold">
+                {user.email?.charAt(0).toUpperCase()}
+              </div>
+            </div>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {user.email?.split("@")[0]}
+            </span>
+          </div>
         </div>
       </nav>
 
       {/* Main Content */}
-      <main className="w-full max-w-4xl p-8">
-        <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">Derslerim</h1>
+      <main className="flex-1 p-8 max-w-7xl mx-auto w-full">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Welcome Section */}
+        <div className="mb-10 relative overflow-hidden rounded-3xl bg-gradient-to-r from-kodrix-purple to-purple-800 dark:from-indigo-950 dark:to-purple-950 p-10 text-white shadow-2xl">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="relative z-10">
+            <h1 className="text-4xl font-bold mb-4">Hoş Geldin, Şampiyon! 🚀</h1>
+            <p className="text-white/80 text-lg max-w-2xl">
+              Bugün yeni bir şeyler öğrenmek için harika bir gün. Derslerine kaldığın yerden devam et ve potansiyelini keşfet.
+            </p>
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2">
+          <span className="w-1 h-8 bg-kodrix-purple dark:bg-amber-500 rounded-full"></span>
+          Derslerim
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {enrollments?.map((kayit: any) => (
             <Link
               key={kayit.class_id}
               href={`/class/${kayit.class_id}`}
-              className="block"
+              className="block group"
             >
-              <div className="group relative bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:border-kodrix-purple dark:hover:border-amber-500 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer h-full">
-                {/* Top accent bar */}
-                <div className="h-2 w-full bg-gradient-to-r from-kodrix-purple to-purple-600 dark:from-amber-500 dark:to-yellow-500" />
+              <div className="relative h-full bg-white/80 dark:bg-white/5 backdrop-blur-md rounded-3xl border border-gray-200 dark:border-white/10 p-6 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-2xl group-hover:shadow-kodrix-purple/10 dark:group-hover:shadow-amber-500/10 group-hover:border-kodrix-purple/30 dark:group-hover:border-amber-500/30 overflow-hidden">
 
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-kodrix-purple dark:group-hover:text-amber-500 transition">
+                {/* Hover Glow */}
+                <div className="absolute inset-0 bg-gradient-to-br from-kodrix-purple/5 to-transparent dark:from-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div className="relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-white/10 flex items-center justify-center mb-4 group-hover:bg-kodrix-purple dark:group-hover:bg-amber-500 transition-colors duration-300">
+                    <span className="text-2xl group-hover:text-white transition-colors duration-300">📚</span>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-kodrix-purple dark:group-hover:text-amber-500 transition-colors">
                     {kayit.classes.name}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">
-                    Canlı derslere ve kayıtlara ulaşmak için tıkla.
+
+                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
+                    Canlı derslere, kayıtlara ve ödevlerine buradan ulaşabilirsin.
                   </p>
 
-                  <div className="mt-6 flex items-center text-kodrix-purple dark:text-amber-500 text-sm font-medium">
-                    Derse Git <span className="ml-2 group-hover:translate-x-1 transition">→</span>
+                  <div className="flex items-center text-sm font-semibold text-kodrix-purple dark:text-amber-500">
+                    Derse Git
+                    <svg className="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
                   </div>
                 </div>
               </div>
@@ -111,15 +139,12 @@ export default async function Home() {
 
           {/* No classes message */}
           {(!enrollments || enrollments.length === 0) && (
-            <div className="col-span-2 text-center p-10 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 border-dashed transition-colors">
-              <p className="text-gray-600 dark:text-gray-400 text-lg">
-                Henüz atanmış bir dersiniz yok.
+            <div className="col-span-full text-center p-12 rounded-3xl border-2 border-dashed border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/5">
+              <div className="text-6xl mb-4">📂</div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Henüz Dersin Yok</h3>
+              <p className="text-gray-500 dark:text-gray-400">
+                Yöneticin sana bir sınıf atadığında burada göreceksin.
               </p>
-              {enrollmentError && (
-                <p className="text-red-500 text-sm mt-2">
-                  Veri çekme hatası. Lütfen yöneticinize başvurun.
-                </p>
-              )}
             </div>
           )}
         </div>

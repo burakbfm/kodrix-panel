@@ -25,5 +25,5 @@ export default async function NewLessonPage({ searchParams }: PageProps) {
         // but Client component handles the error UI.
     }
 
-    return <NewLessonClient moduleId={moduleId} programId={programId} userId={user.id} />;
+    return <NewLessonClient moduleId={moduleId || ""} programId={programId || ""} userId={user.id} />;
 }

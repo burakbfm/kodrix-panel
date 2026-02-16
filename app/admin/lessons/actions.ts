@@ -44,8 +44,6 @@ export async function createProgramLesson(formData: FormData) {
         content: formData.get("content") as string || null,
         duration_minutes: parseInt(formData.get("duration_minutes") as string) || 45,
         order: parseInt(formData.get("order") as string) || 0,
-        duration_minutes: parseInt(formData.get("duration_minutes") as string) || 45,
-        order: parseInt(formData.get("order") as string) || 0,
         video_url: formData.get("video_url") as string || null,
         meeting_link: formData.get("meeting_link") as string || null,
         attachments: attachments, // Save the JSON array of file metadata
@@ -86,8 +84,6 @@ export async function updateProgramLesson(formData: FormData) {
         title: formData.get("title") as string,
         description: formData.get("description") as string || null,
         content: formData.get("content") as string || null,
-        duration_minutes: parseInt(formData.get("duration_minutes") as string) || 45,
-        order: parseInt(formData.get("order") as string) || 0,
         duration_minutes: parseInt(formData.get("duration_minutes") as string) || 45,
         order: parseInt(formData.get("order") as string) || 0,
         video_url: formData.get("video_url") as string || null,

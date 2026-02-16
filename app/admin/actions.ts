@@ -94,6 +94,41 @@ export async function deleteUser(formData: FormData) {
 
   revalidatePath("/admin/users");
 }
+// --- KULLANICI GÜNCELLEME ---
+export async function updateSystemUser(formData: FormData) {
+  const supabaseAdmin = createAdminClient();
+
+  const userId = formData.get("userId") as string;
+  const fullName = formData.get("fullName") as string;
+  const parentName = formData.get("parentName") as string | null;
+  const parentPhone = formData.get("parentPhone") as string | null;
+  const subjectField = formData.get("subjectField") as string | null;
+
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .single();
+
+  const role = profile?.role;
+
+  const { error } = await supabaseAdmin.from("profiles").update({
+    full_name: fullName,
+    parent_name: role === "student" ? parentName : null,
+    parent_phone: role === "student" ? parentPhone : null,
+    subject_field: role === "teacher" ? subjectField : null,
+  }).eq("id", userId);
+
+  if (error) {
+    console.error("Kullanıcı güncelleme hatası:", error.message);
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/admin/users");
+  revalidatePath(`/admin/users/${userId}`);
+  redirect("/admin/users");
+}
+
 // --- YENİ EKLENENLER: DERS İŞLEMLERİ ---
 
 export async function createLesson(formData: FormData) {

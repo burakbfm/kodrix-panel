@@ -15,7 +15,7 @@ interface FileAttachment {
 }
 
 interface FileUploadProps {
-    bucket: "program-files" | "lesson-files";
+    bucket: "program-files" | "lesson-files" | "assignment-files";
     path: string; // e.g., "program-id" or "class-id/lesson-id"
     existingFiles?: FileAttachment[];
     onFilesChange: (files: FileAttachment[]) => void;
