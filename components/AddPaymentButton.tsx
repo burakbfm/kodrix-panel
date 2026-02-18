@@ -49,7 +49,7 @@ export function AddPaymentButton({ students, payments }: AddPaymentButtonProps) 
         <>
             <button
                 onClick={() => setShowStudentSelect(true)}
-                className="flex items-center gap-2 px-6 py-3.5 bg-white text-orange-700 rounded-2xl hover:bg-orange-50 hover:scale-[1.02] transition-all duration-200 font-bold whitespace-nowrap shadow-lg"
+                className="flex items-center gap-2 px-6 py-3.5 bg-white text-emerald-700 rounded-2xl hover:bg-emerald-50 hover:scale-[1.02] transition-all duration-200 font-bold whitespace-nowrap shadow-lg"
             >
                 <Plus className="w-5 h-5" />
                 Ödeme Ekle

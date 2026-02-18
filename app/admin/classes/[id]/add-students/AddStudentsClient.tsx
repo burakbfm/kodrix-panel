@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { ArrowLeft, UserPlus, Search } from "lucide-react";
+import { enrollStudents } from "@/app/admin/actions";
 
 interface Student {
     id: string;
@@ -58,20 +58,17 @@ export default function AddStudentsClient({
         }
 
         setLoading(true);
-        const supabase = createClient();
 
-        const enrollmentData = Array.from(selectedStudents).map((studentId) => ({
-            class_id: classId,
-            user_id: studentId,
-        }));
+        const studentIds = Array.from(selectedStudents);
 
-        const { error } = await supabase.from("enrollments").insert(enrollmentData);
-
-        if (error) {
+        try {
+            await enrollStudents(classId, studentIds);
+            // Success! Hard redirect to force cache refresh
+            window.location.href = `/admin/classes/${classId}?tab=students`;
+        } catch (error: any) {
             console.error("Öğrenci ekleme hatası:", error);
             alert("Öğrenci eklenirken hata oluştu: " + error.message);
             setLoading(false);
-            return;
         }
 
         // Success! Hard redirect to force cache refresh

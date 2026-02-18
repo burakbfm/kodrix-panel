@@ -79,21 +79,21 @@ export default async function ProgramsPage() {
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-10">
             {/* Header */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-teal-900 to-emerald-900 dark:from-teal-950 dark:to-emerald-950 p-10 text-white shadow-2xl border border-white/10">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-600 to-orange-700 dark:from-amber-700 dark:to-orange-800 p-10 text-white shadow-2xl border border-white/10">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div>
                         <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-                            <BookMarked className="w-10 h-10 text-emerald-200" />
+                            <BookMarked className="w-10 h-10 text-amber-200" />
                             Programlar
                         </h1>
-                        <p className="text-emerald-200 text-lg">
+                        <p className="text-amber-200 text-lg">
                             Eğitim programlarını ve ders şablonlarını yönetin.
                         </p>
                     </div>
                     <Link
                         href="/admin/programs/new"
-                        className="px-8 py-4 bg-white text-emerald-900 rounded-2xl hover:shadow-lg hover:shadow-white/20 hover:scale-[1.02] transition-all duration-200 font-bold flex items-center gap-2 whitespace-nowrap"
+                        className="px-8 py-4 bg-white text-orange-800 rounded-2xl hover:shadow-lg hover:shadow-white/20 hover:scale-[1.02] transition-all duration-200 font-bold flex items-center gap-2 whitespace-nowrap"
                     >
                         <Plus className="w-5 h-5" />
                         Yeni Program
@@ -123,7 +123,7 @@ export default async function ProgramsPage() {
                     </p>
                     <Link
                         href="/admin/programs/new"
-                        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-kodrix-purple to-purple-800 dark:from-amber-500 dark:to-orange-600 text-white dark:text-gray-900 rounded-2xl hover:shadow-lg transition-all font-bold"
+                        className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-kodrix-purple to-purple-800 dark:from-teal-500 dark:to-emerald-600 text-white dark:text-gray-900 rounded-2xl hover:shadow-lg transition-all font-bold"
                     >
                         <Plus className="w-5 h-5" />
                         Program Oluştur

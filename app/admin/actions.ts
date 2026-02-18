@@ -4,14 +4,50 @@ import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation"
 import { createAdminClient } from "@/lib/supabase/admin"; // Yeni dosyamız
+import { logSystemAction } from "@/lib/logger";
 // --- SINIF İŞLEMLERİ (ESKİLER) ---
 
 export async function createClass(formData: FormData) {
   const supabase = await createClient();
   const name = formData.get("name") as string;
 
-  const { error } = await supabase.from("classes").insert([{ name }]);
-  if (error) console.error("Sınıf ekleme hatası:", error);
+  // 1. Sınıfı oluştur
+  const { data: classData, error } = await supabase
+    .from("classes")
+    .insert([{ name }])
+    .select("id, name")
+    .single();
+
+  if (error) {
+    console.error("Sınıf ekleme hatası:", error);
+    return;
+  }
+
+  // 2. Sınıf için otomatik sohbet odası oluştur
+  if (classData) {
+    const admin = createAdminClient();
+    const { data: room, error: chatError } = await admin.from("chat_rooms").insert({
+      type: "class",
+      class_id: classData.id,
+      name: `${classData.name} Sınıfı`, // Örn: "10-A Sınıfı"
+    }).select().single();
+
+    if (chatError) {
+      console.error("Sohbet odası oluşturma hatası:", chatError);
+    } else if (room) {
+      // Admini (oluşturan kişiyi) odaya ekle
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await admin.from("chat_members").insert({
+          room_id: room.id,
+          user_id: user.id
+        });
+      }
+    }
+
+    if (chatError) console.error("Sohbet odası oluşturma hatası:", chatError);
+  }
+
   revalidatePath("/admin/classes");
 }
 
@@ -499,4 +535,140 @@ export async function deleteQuiz(formData: FormData) {
   }
 
   revalidatePath("/admin/quizzes");
+  revalidatePath("/admin/quizzes");
+}
+
+// ============================================
+// STUDENT ENROLLMENT ACTIONS (NEW)
+// ============================================
+
+export async function enrollStudents(classId: string, studentIds: string[]) {
+  // Use admin client for enrollments to bypass RLS restrictions if any
+  const admin = createAdminClient();
+
+  if (!classId || studentIds.length === 0) return;
+
+  // 1. Öğrencileri sınıfa kaydet (enrollments)
+  const enrollmentData = studentIds.map((userId) => ({
+    class_id: classId,
+    user_id: userId,
+  }));
+
+  const { error: enrollError } = await admin.from("enrollments").insert(enrollmentData);
+
+  if (enrollError) {
+    console.error("Öğrenci kaydetme hatası:", enrollError);
+    throw new Error(enrollError.message);
+  }
+
+  // 2. Sınıfın sohbet odasını bul
+  const { data: room } = await admin
+    .from("chat_rooms")
+    .select("id")
+    .eq("class_id", classId)
+    .single();
+
+  // 3. Eğer oda varsa, öğrencileri oraya da ekle
+  if (room) {
+    const chatMemberData = studentIds.map((userId) => ({
+      room_id: room.id,
+      user_id: userId,
+    }));
+
+    // Ignore duplicates (ON CONFLICT DO NOTHING would be ideal but insert handles it via checking existing)
+    // Simple insert, assuming they aren't already in. If they are, it might error if unique constraint exists.
+    // Let's use upsert or ignore error. The unique constraint is (room_id, user_id).
+    const { error: chatError } = await admin
+      .from("chat_members")
+      .upsert(chatMemberData, { onConflict: "room_id, user_id", ignoreDuplicates: true });
+
+    if (chatError) console.error("Sohbet üyesi ekleme hatası:", chatError);
+  }
+
+  revalidatePath(`/admin/classes/${classId}`);
+}
+
+// ============================================
+// DIRECT CHAT ACTIONS (NEW)
+// ============================================
+
+export async function startDirectChat(targetUserId: string): Promise<string> {
+  const supabase = await createClient();
+  const admin = createAdminClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Yetkisiz");
+
+  // 1. Check if DM room already exists (admin client bypasses RLS)
+  const { data: myRooms } = await admin
+    .from("chat_members")
+    .select("room_id")
+    .eq("user_id", user.id);
+
+  const { data: theirRooms } = await admin
+    .from("chat_members")
+    .select("room_id")
+    .eq("user_id", targetUserId);
+
+  const myRoomIds = new Set(myRooms?.map((r) => r.room_id) || []);
+  const sharedRoomIds = theirRooms?.filter((r) => myRoomIds.has(r.room_id)).map((r) => r.room_id) || [];
+
+  if (sharedRoomIds.length > 0) {
+    const { data: existingRooms } = await admin
+      .from("chat_rooms")
+      .select("id, type")
+      .in("id", sharedRoomIds)
+      .in("type", ["direct", "teacher_student"]);
+
+    if (existingRooms && existingRooms.length > 0) {
+      return existingRooms[0].id; // Return existing room, no error
+    }
+  }
+
+  // 2. Get target user's role to determine chat type
+  const { data: targetProfile } = await admin
+    .from("profiles")
+    .select("role")
+    .eq("id", targetUserId)
+    .single();
+
+  const chatType =
+    (targetProfile?.role === "teacher" || targetProfile?.role === "admin") ? "teacher_student" : "direct";
+
+  // 3. Create room (admin client, completely bypasses RLS)
+  const { data: newRoom, error: roomError } = await admin
+    .from("chat_rooms")
+    .insert({ type: chatType })
+    .select("id")
+    .single();
+
+  if (roomError || !newRoom) {
+    console.error("Oda oluşturma hatası:", roomError);
+    throw new Error("Oda oluşturulamadı: " + (roomError?.message || "Bilinmeyen hata"));
+  }
+
+  // 4. Add both members (admin client)
+  const { error: memberError } = await admin.from("chat_members").insert([
+    { room_id: newRoom.id, user_id: user.id },
+    { room_id: newRoom.id, user_id: targetUserId },
+  ]);
+
+  if (memberError) {
+    console.error("Üye ekleme hatası:", memberError);
+  }
+
+  if (memberError) {
+    console.error("Üye ekleme hatası:", memberError);
+  }
+
+  // Log chat creation
+  await logSystemAction(user.id, "chat_create", {
+    room_id: newRoom.id,
+    target_user_id: targetUserId,
+    type: chatType
+  });
+
+  return newRoom.id;
 }

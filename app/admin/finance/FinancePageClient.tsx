@@ -110,7 +110,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                     <select
                         value={itemsPerPage}
                         onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                        className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-medium focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-500 outline-none transition"
+                        className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-medium focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-500 outline-none transition"
                     >
                         <option value={10}>10</option>
                         <option value={25}>25</option>
@@ -127,7 +127,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                             className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition">
                             <ChevronLeft className="w-4 h-4" />
                         </button>
-                        <span className="px-3 py-1 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-500 font-bold text-xs min-w-[50px] text-center">
+                        <span className="px-3 py-1 rounded-lg bg-teal-500/10 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 font-bold text-xs min-w-[50px] text-center">
                             {currentPage} / {totalPages}
                         </span>
                         <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
@@ -144,7 +144,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
         <div className="p-8 max-w-7xl mx-auto space-y-8">
 
             {/* ═══════ HERO HEADER ═══════ */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-600 p-10 text-white shadow-2xl border border-white/10">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-teal-600 to-emerald-700 dark:from-teal-700 dark:to-emerald-800 p-10 text-white shadow-2xl border border-white/10">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4 pointer-events-none"></div>
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -160,7 +160,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                     <div className="flex gap-3">
                         <button
                             onClick={() => setIsExpenseModalOpen(true)}
-                            className="flex items-center gap-2 px-6 py-3.5 bg-white text-orange-700 rounded-2xl hover:bg-orange-50 hover:scale-[1.02] transition-all duration-200 font-bold whitespace-nowrap shadow-lg"
+                            className="flex items-center gap-2 px-6 py-3.5 bg-white text-emerald-700 rounded-2xl hover:bg-emerald-50 hover:scale-[1.02] transition-all duration-200 font-bold whitespace-nowrap shadow-lg"
                         >
                             <TrendingDown className="w-5 h-5" />
                             Gider Ekle
@@ -187,10 +187,10 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                 {/* Expected */}
                 <div className="bg-white/80 dark:bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-gray-200 dark:border-white/10 shadow-xl shadow-gray-200/30 dark:shadow-black/10 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-amber-500/20 text-orange-600 dark:text-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-2xl bg-teal-100 dark:bg-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <Wallet className="w-6 h-6" />
                         </div>
-                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-amber-900/20 text-orange-600 dark:text-amber-500 uppercase tracking-wider">Beklenen</span>
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 uppercase tracking-wider">Beklenen</span>
                     </div>
                     <p className="text-2xl font-black text-gray-900 dark:text-white truncate" title={`${totalAgreed} ₺`}>
                         {totalAgreed.toLocaleString('tr-TR')} ₺
@@ -251,10 +251,10 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                 {/* Other Expenses */}
                 <div className="bg-white/80 dark:bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-gray-200 dark:border-white/10 shadow-xl shadow-gray-200/30 dark:shadow-black/10 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                             <Receipt className="w-6 h-6" />
                         </div>
-                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 uppercase tracking-wider">Ekstra Gider</span>
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 uppercase tracking-wider">Ekstra Gider</span>
                     </div>
                     <p className="text-2xl font-black text-gray-900 dark:text-white truncate" title={`${otherExpenses} ₺`}>
                         {otherExpenses.toLocaleString('tr-TR')} ₺
@@ -278,7 +278,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
             {/* ═══════ ANALYTICS CHART ═══════ */}
             <div className="bg-white/80 dark:bg-white/5 backdrop-blur-md rounded-3xl border border-gray-200 dark:border-white/10 p-8 shadow-xl">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                    <LayoutDashboard className="w-5 h-5 text-amber-600 dark:text-amber-500" />
+                    <LayoutDashboard className="w-5 h-5 text-teal-600 dark:text-teal-400" />
                     Aylık Finansal Durum
                 </h3>
                 <div className="h-80 w-full">
@@ -304,7 +304,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
             <div className="flex gap-2 p-1.5 bg-gray-100/80 dark:bg-white/5 rounded-2xl w-fit border border-gray-200 dark:border-white/10 backdrop-blur-sm">
                 <button onClick={() => handleTabChange('students')}
                     className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${activeTab === 'students'
-                        ? 'bg-white dark:bg-gray-800 text-amber-600 dark:text-amber-500 shadow-md'
+                        ? 'bg-white dark:bg-gray-800 text-teal-600 dark:text-teal-400 shadow-md'
                         : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                         }`}>
                     <Users className="w-4 h-4" />
@@ -312,7 +312,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                 </button>
                 <button onClick={() => handleTabChange('teachers')}
                     className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${activeTab === 'teachers'
-                        ? 'bg-white dark:bg-gray-800 text-amber-600 dark:text-amber-500 shadow-md'
+                        ? 'bg-white dark:bg-gray-800 text-teal-600 dark:text-teal-400 shadow-md'
                         : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                         }`}>
                     <GraduationCap className="w-4 h-4" />
@@ -334,8 +334,8 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                 {/* Search Header */}
                 <div className="p-6 border-b border-gray-100 dark:border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50 dark:bg-black/10">
                     <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2 text-lg">
-                        {activeTab === 'students' && <Users className="w-5 h-5 text-amber-600 dark:text-amber-500" />}
-                        {activeTab === 'teachers' && <GraduationCap className="w-5 h-5 text-amber-600 dark:text-amber-500" />}
+                        {activeTab === 'students' && <Users className="w-5 h-5 text-teal-600 dark:text-teal-400" />}
+                        {activeTab === 'teachers' && <GraduationCap className="w-5 h-5 text-teal-600 dark:text-teal-400" />}
                         {activeTab === 'expenses' && <TrendingDown className="w-5 h-5 text-red-500" />}
                         {activeTab === 'students' ? 'Öğrenci Listesi' : activeTab === 'teachers' ? 'Öğretmen Listesi' : 'Tüm Giderler'}
                         <span className="ml-2 text-[11px] font-bold text-gray-500 bg-white dark:bg-white/10 px-3 py-1 rounded-lg border border-gray-200 dark:border-white/10">{totalItems} kayıt</span>
@@ -348,7 +348,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                             placeholder="Ara..."
                             value={searchTerm}
                             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                            className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500/20 dark:focus:ring-amber-500/20 focus:border-amber-500 dark:focus:border-amber-500 transition-all outline-none placeholder-gray-400"
+                            className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500/20 dark:focus:ring-teal-500/20 focus:border-teal-500 dark:focus:border-teal-500 transition-all outline-none placeholder-gray-400"
                         />
                     </div>
                 </div>
@@ -387,7 +387,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                         const badgeClasses: Record<string, string> = {
                                             emerald: "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800/50",
                                             blue: "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-800/50",
-                                            amber: "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-800/50",
+                                            amber: "bg-amber-50 dark:bg-amber-900/20 text-teal-600 dark:text-teal-400 border-amber-100 dark:border-amber-800/50",
                                             gray: "bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-white/10"
                                         };
                                         const barColors: Record<string, string> = {
@@ -395,14 +395,14 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                         };
 
                                         return (
-                                            <tr key={student.id} className="group hover:bg-orange-50/50 dark:hover:bg-amber-900/[0.05] transition-all duration-200">
+                                            <tr key={student.id} className="group hover:bg-teal-50/50 dark:hover:bg-teal-900/[0.05] transition-all duration-200">
                                                 <td className="p-5 pl-8">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 rounded-xl bg-orange-100 dark:bg-amber-500/20 text-orange-700 dark:text-amber-500 flex items-center justify-center font-bold text-sm shadow-sm">
+                                                        <div className="w-10 h-10 rounded-xl bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-400 flex items-center justify-center font-bold text-sm shadow-sm">
                                                             {(student.full_name || student.email)?.charAt(0).toUpperCase()}
                                                         </div>
                                                         <div>
-                                                            <p className="font-bold text-gray-900 dark:text-white group-hover:text-orange-700 dark:group-hover:text-amber-500 transition-colors text-sm">{student.full_name || "İsimsiz"}</p>
+                                                            <p className="font-bold text-gray-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors text-sm">{student.full_name || "İsimsiz"}</p>
                                                             <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">{student.school_number || student.email}</p>
                                                         </div>
                                                     </div>
@@ -422,7 +422,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                                 <td className="p-5 text-right font-bold text-sm text-emerald-600 dark:text-emerald-400">
                                                     {stats.paid > 0 ? `${stats.paid.toLocaleString('tr-TR')} ₺` : "-"}
                                                 </td>
-                                                <td className="p-5 text-right font-bold text-sm text-amber-600 dark:text-amber-400">
+                                                <td className="p-5 text-right font-bold text-sm text-teal-600 dark:text-teal-400">
                                                     {remaining > 0 ? `${remaining.toLocaleString('tr-TR')} ₺` : "-"}
                                                 </td>
                                                 <td className="p-5">
@@ -440,7 +440,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                                 </td>
                                                 <td className="p-5 pr-8 text-right">
                                                     <Link href={`/admin/finance/${student.id}`}
-                                                        className="inline-flex items-center gap-1.5 text-orange-700 dark:text-amber-500 hover:text-orange-800 dark:hover:text-amber-400 text-xs font-bold transition bg-orange-50 dark:bg-amber-500/10 px-3.5 py-2 rounded-xl border border-orange-200 dark:border-amber-500/20 hover:shadow-sm hover:scale-105">
+                                                        className="inline-flex items-center gap-1.5 text-teal-700 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 text-xs font-bold transition bg-teal-50 dark:bg-teal-500/10 px-3.5 py-2 rounded-xl border border-teal-200 dark:border-teal-500/20 hover:shadow-sm hover:scale-105">
                                                         Detay <ArrowRight className="w-3.5 h-3.5" />
                                                     </Link>
                                                 </td>
@@ -478,14 +478,14 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                     {(paginatedData as typeof teachers).map((teacher) => {
                                         const paid = teacherPaymentStats.get(teacher.id) || 0;
                                         return (
-                                            <tr key={teacher.id} className="group hover:bg-amber-500/[0.03] dark:hover:bg-amber-900/[0.05] transition-all duration-200">
+                                            <tr key={teacher.id} className="group hover:bg-teal-500/[0.03] dark:hover:bg-teal-900/[0.05] transition-all duration-200">
                                                 <td className="p-5 pl-8">
                                                     <div className="flex items-center gap-4">
                                                         <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm shadow-sm">
                                                             {teacher.full_name?.[0] || 'T'}
                                                         </div>
                                                         <div>
-                                                            <div className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-500 transition-colors">{teacher.full_name}</div>
+                                                            <div className="font-bold text-sm text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">{teacher.full_name}</div>
                                                             <div className="text-[11px] text-gray-500 font-medium mt-0.5">{teacher.email}</div>
                                                         </div>
                                                     </div>
@@ -494,7 +494,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                                 <td className="p-5 text-right font-bold text-sm text-gray-900 dark:text-white">{paid > 0 ? `${paid.toLocaleString('tr-TR')} ₺` : "-"}</td>
                                                 <td className="p-5 pr-8 text-right">
                                                     <Link href={`/admin/finance/teacher/${teacher.id}`}
-                                                        className="text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 text-xs font-bold bg-amber-500/5 dark:bg-amber-500/10 px-3.5 py-2 rounded-xl border border-amber-500/10 dark:border-amber-500/20 hover:shadow-sm hover:scale-105 transition-all inline-flex items-center gap-1.5">
+                                                        className="text-teal-600 dark:text-teal-400 hover:text-amber-700 dark:hover:text-amber-400 text-xs font-bold bg-teal-500/5 dark:bg-teal-500/10 px-3.5 py-2 rounded-xl border border-teal-500/10 dark:border-teal-500/20 hover:shadow-sm hover:scale-105 transition-all inline-flex items-center gap-1.5">
                                                         Detay <ArrowRight className="w-3.5 h-3.5" />
                                                     </Link>
                                                 </td>
@@ -593,7 +593,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-lg border border-gray-200 dark:border-white/10 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
 
                             {/* Modal Header */}
-                            <div className="p-6 border-b border-gray-100 dark:border-white/5 flex justify-between items-center bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/10 dark:to-orange-900/10 rounded-t-3xl">
+                            <div className="p-6 border-b border-gray-100 dark:border-white/5 flex justify-between items-center bg-gradient-to-r from-red-50 to-teal-50 dark:from-red-900/10 dark:to-teal-900/10 rounded-t-3xl">
                                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                     <TrendingDown className="w-5 h-5 text-red-500" />
                                     Yeni Gider Ekle
@@ -613,26 +613,26 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Başlık</label>
                                     <input type="text" name="title" required placeholder="Örn: Maaş Ödemesi"
-                                        className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-500 focus:border-transparent outline-none transition" />
+                                        className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-500 focus:border-transparent outline-none transition" />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Tutar (TL)</label>
                                         <input type="number" name="amount" required step="0.01" min="0"
-                                            className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-500 focus:border-transparent outline-none transition" />
+                                            className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-500 focus:border-transparent outline-none transition" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Tarih</label>
                                         <input type="date" name="paymentDate" required defaultValue={new Date().toISOString().split('T')[0]}
-                                            className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-500 focus:border-transparent outline-none transition" />
+                                            className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-500 focus:border-transparent outline-none transition" />
                                     </div>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Kategori</label>
                                     <select name="category" value={expenseCategory} onChange={(e) => setExpenseCategory(e.target.value)}
-                                        className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-500 focus:border-transparent outline-none transition">
+                                        className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-500 focus:border-transparent outline-none transition">
                                         <option value="teacher_payment">Öğretmen Ödemesi</option>
                                         <option value="other">Diğer Gider</option>
                                     </select>
@@ -642,7 +642,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                     <div>
                                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Öğretmen Seç</label>
                                         <select name="teacherId"
-                                            className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-500 focus:border-transparent outline-none transition">
+                                            className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-500 focus:border-transparent outline-none transition">
                                             <option value="">Seçiniz...</option>
                                             {teachers.map(t => (
                                                 <option key={t.id} value={t.id}>{t.full_name || t.email}</option>
@@ -654,7 +654,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Açıklama</label>
                                     <textarea name="description" rows={3}
-                                        className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-500 focus:border-transparent outline-none transition resize-none" />
+                                        className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-500 focus:border-transparent outline-none transition resize-none" />
                                 </div>
 
                                 <div className="pt-2 flex gap-3">
@@ -663,7 +663,7 @@ export function FinancePageClient({ students, teachers, payments, expenses, mont
                                         İptal
                                     </button>
                                     <button type="submit"
-                                        className="flex-1 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-600 dark:from-amber-500 dark:to-orange-500 text-white rounded-xl font-bold hover:shadow-lg hover:scale-[1.01] transition-all">
+                                        className="flex-1 px-4 py-3 bg-gradient-to-r from-teal-500 to-emerald-600 dark:from-teal-500 dark:to-emerald-500 text-white rounded-xl font-bold hover:shadow-lg hover:scale-[1.01] transition-all">
                                         Kaydet
                                     </button>
                                 </div>

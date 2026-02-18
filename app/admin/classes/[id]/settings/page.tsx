@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
@@ -37,6 +38,7 @@ export default async function ClassSettingsPage({ params }: PageProps) {
         const name = formData.get("name") as string;
         const teacherId = formData.get("teacher_id") as string || null;
 
+        // 1. Sınıfı güncelle
         const { error } = await supabase
             .from("classes")
             .update({
@@ -48,6 +50,37 @@ export default async function ClassSettingsPage({ params }: PageProps) {
         if (error) {
             console.error("Sınıf güncelleme hatası:", error);
             return;
+        }
+
+        // 2. Eğer öğretmen atandıysa, sohbet grubuna da ekle
+        if (teacherId) {
+            const admin = createAdminClient();
+
+            // Sınıfın sohbet odasını bul
+            const { data: room } = await admin
+                .from("chat_rooms")
+                .select("id")
+                .eq("class_id", id)
+                .single();
+
+            // Sınıfın eskiden odası yoksa oluştur (Geriye dönük uyumluluk)
+            let roomId = room?.id;
+            if (!roomId) {
+                const { data: newRoom } = await admin.from("chat_rooms").insert({
+                    type: "class",
+                    class_id: id,
+                    name: `${name} Sınıfı`,
+                }).select("id").single();
+                roomId = newRoom?.id;
+            }
+
+            // Öğretmeni odaya ekle
+            if (roomId) {
+                await admin.from("chat_members").upsert({
+                    room_id: roomId,
+                    user_id: teacherId
+                }, { onConflict: "room_id, user_id" });
+            }
         }
 
         revalidatePath(`/admin/classes/${id}`);

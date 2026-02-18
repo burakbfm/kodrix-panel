@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { logSystemAction } from "@/lib/logger";
 
 export async function login(prevState: any, formData: FormData) {
   const supabase = await createClient();
@@ -23,6 +24,12 @@ export async function login(prevState: any, formData: FormData) {
   if (error) {
     // Hata varsa geri dön
     return { error: "Giriş başarısız! Numara veya şifre yanlış." };
+  }
+
+  // Log login action
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    await logSystemAction(user.id, "login", { method: "email" });
   }
 
   // Başarılıysa anasayfaya yönlendir

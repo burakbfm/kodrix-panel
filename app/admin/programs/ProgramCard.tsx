@@ -38,9 +38,9 @@ export default function ProgramCard({ program, deleteAction }: ProgramCardProps)
 
     return (
         <div
-            className="group relative bg-white/80 dark:bg-white/5 backdrop-blur-md rounded-3xl border border-gray-200 dark:border-white/10 p-6 flex flex-col justify-between hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+            className="group relative bg-white/80 dark:bg-white/5 backdrop-blur-md rounded-3xl border border-gray-200 dark:border-white/10 p-6 flex flex-col justify-between hover:shadow-xl hover:shadow-amber-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
         >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-teal-500/10 transition-colors"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/10 transition-colors"></div>
 
             <div className="relative z-10">
                 <div className="flex items-start justify-between mb-5">
@@ -50,7 +50,7 @@ export default function ProgramCard({ program, deleteAction }: ProgramCardProps)
                     <div className="flex gap-2">
                         <Link
                             href={`/admin/programs/${program.id}`}
-                            className="p-2 hover:bg-white dark:hover:bg-white/10 rounded-xl transition text-gray-400 hover:text-teal-600 dark:hover:text-amber-400 border border-transparent hover:border-gray-100 dark:hover:border-white/10"
+                            className="p-2 hover:bg-white dark:hover:bg-white/10 rounded-xl transition text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 border border-transparent hover:border-gray-100 dark:hover:border-white/10"
                             title="Düzenle"
                         >
                             <Edit className="w-4 h-4" />
@@ -66,7 +66,7 @@ export default function ProgramCard({ program, deleteAction }: ProgramCardProps)
                     </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-teal-600 dark:group-hover:text-emerald-400 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                     {program.title}
                 </h3>
 
@@ -78,16 +78,16 @@ export default function ProgramCard({ program, deleteAction }: ProgramCardProps)
 
                 <div className="flex flex-wrap gap-2 mb-6">
                     <div className="flex items-center gap-1.5 text-xs font-medium bg-gray-50 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-white/5 text-gray-600 dark:text-gray-300">
-                        <Layers className="w-3.5 h-3.5 text-teal-600 dark:text-emerald-400" />
+                        <Layers className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                         <span>{program.module_count} Modül</span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs font-medium bg-gray-50 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-white/5 text-gray-600 dark:text-gray-300">
-                        <BookOpen className="w-3.5 h-3.5 text-teal-600 dark:text-emerald-400" />
+                        <BookOpen className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                         <span>{program.lesson_count} Ders</span>
                     </div>
                     {program.total_duration_minutes > 0 && (
                         <div className="flex items-center gap-1.5 text-xs font-medium bg-gray-50 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-white/5 text-gray-600 dark:text-gray-300">
-                            <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-emerald-400" />
+                            <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                             <span>
                                 {totalHours > 0 && `${totalHours}s `}
                                 {totalMinutes > 0 && `${totalMinutes}dk`}
@@ -101,10 +101,10 @@ export default function ProgramCard({ program, deleteAction }: ProgramCardProps)
                 href={`/admin/programs/${program.id}`}
                 className="pt-4 border-t border-gray-100 dark:border-white/10 flex justify-between items-center group/link mt-auto"
             >
-                <span className="text-xs text-gray-400 font-medium group-hover/link:text-teal-600 dark:group-hover/link:text-emerald-400 transition-colors">
+                <span className="text-xs text-gray-400 font-medium group-hover/link:text-amber-600 dark:group-hover/link:text-amber-400 transition-colors">
                     Program Detayları
                 </span>
-                <span className="w-8 h-8 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 group-hover/link:bg-teal-50 dark:group-hover/link:bg-emerald-500/20 group-hover/link:text-teal-600 dark:group-hover/link:text-emerald-400 transition-all duration-300">
+                <span className="w-8 h-8 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 group-hover/link:bg-amber-50 dark:group-hover/link:bg-amber-500/20 group-hover/link:text-amber-600 dark:group-hover/link:text-amber-400 transition-all duration-300">
                     <ArrowRight className="w-4 h-4" />
                 </span>
             </Link>

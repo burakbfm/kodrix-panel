@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, DollarSign, BookOpen, LogOut, CreditCard, User, GraduationCap, FileText, Settings } from "lucide-react";
+import { LayoutDashboard, Users, DollarSign, BookOpen, LogOut, CreditCard, User, GraduationCap, FileText, Settings, Sparkles, Bot, MessageCircle, Activity } from "lucide-react";
 import { SidebarLogo } from "@/components/SidebarLogo";
 
 type Role = "admin" | "teacher" | "student";
@@ -24,14 +24,22 @@ export function Sidebar({ role, userName, userEmail }: SidebarProps) {
             { href: "/admin/quizzes", label: "Quizler", icon: FileText },
             { href: "/admin/users", label: "Kullanıcılar", icon: Users },
             { href: "/admin/finance", label: "Finans", icon: DollarSign },
+            { href: "/admin/ai", label: "Yapay Zekalar", icon: Sparkles },
+            { href: "/admin/ai-settings", label: "AI Yönetimi", icon: Bot },
+            { href: "/admin/messages", label: "Mesajlar", icon: MessageCircle },
+            { href: "/admin/logs", label: "Loglar", icon: Activity },
         ],
         teacher: [
             { href: "/teacher", label: "Genel Bakış", icon: LayoutDashboard },
             { href: "/teacher/classes", label: "Sınıflarım", icon: BookOpen },
+            { href: "/teacher/ai", label: "Yapay Zekalar", icon: Sparkles },
+            { href: "/teacher/messages", label: "Mesajlar", icon: MessageCircle },
             { href: "/teacher/profile", label: "Profilim", icon: User },
         ],
         student: [
             { href: "/student", label: "Derslerim", icon: LayoutDashboard },
+            { href: "/student/ai", label: "Yapay Zekalar", icon: Sparkles },
+            { href: "/student/messages", label: "Mesajlar", icon: MessageCircle },
             { href: "/student/payments", label: "Ödemelerim", icon: CreditCard },
             { href: "/student/profile", label: "Profilim", icon: User },
         ],
